@@ -13,6 +13,7 @@ public class AlertUtil {
 			String message) {
 		Alert alert = new Alert(alertType);
 		alert.setTitle(title);
+		alert.setHeaderText("Message");
 		alert.setContentText(message);
 		alert.show();
 	}

@@ -1,0 +1,31 @@
+Uma biblioteca precisa de uma aplicação para controlar os empréstimos de livros.
+
+	REQUISITOS FUNCIONAIS
+R1. O sistema deve manter informações cadastrais dos clientes e de seu histórico de empréstimos.
+
+R2. O sistema deve permitir que o funcionário registre os empréstimos de livros para clientes.
+
+R3. O sistema deve permitir que o funcionário registre a devolução de livros.
+
+R4. O sistema deve manter informações do(s) funcionários que registram empréstimos.
+
+R5. O sistema de manter informações cadatrais sobre os livros.
+
+R6. O sistema de permitir que o funcionário visualize a situação de um determinado livro para ver se está dísponível, senão quando estará.
+
+R7. O sistema deve controlar e disparar avisos por email sobre  prazos de devolução se esgotando aos Cliente.
+
+R8. 
+	
+	REQUISITOS NÃO FUNCIONAIS
+	REGRAS DO NEGÓCIO
+RN01. Um cliente não pode realizar um empréstimo caso já tenha um empréstimo pendente.
+
+RN02. Um cliente não pode pegar mais de 3 livros por emprestímo.
+
+RN03. O sistema deve limitar a data de devolução do empréstimo para 7 dias úteís. Caso seja necessário mais dias, o sistema deverá aguardar pela autorização do bibliotecário para efetivar o empréstimo.
+
+	Portabilidade
+RN04. O sistema dever ser implementado com a linguagem de programação Java.
+
+RN05. O sistema dever ser capaz de armazenar os dados em base de dados SQL Server ou SQLite.

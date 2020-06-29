@@ -1,4 +1,4 @@
-package repository;
+package persistence;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,31 +9,31 @@ import java.util.List;
 
 import model.Customer;
 
-public class CustomerRepository {
+public class CustomerDaoImpl {
 	private PreparedStatement insertNewCustomer;
 	private PreparedStatement updateCustomer;
 	private PreparedStatement deleteCustomer;
 	private PreparedStatement selectAllCustomers;
 	
-	public CustomerRepository() {
+	public CustomerDaoImpl() {
 		try {
 			Connection connection = Database.getConnection();
 			
 			insertNewCustomer = connection.prepareStatement(
 					"INSERT INTO Customer " +
-					"(RG, CPF, Name, Email, Street, Number, Complement, " + 
-					"PostalCode) " +
-					"VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+					"(CPF, Name, Email, Street, Number, Complement, " + 
+					"ZipCode) " +
+					"VALUES (?, ?, ?, ?, ?, ?, ?)");
 			
 			updateCustomer = connection.prepareStatement(
 					"UPDATE Customer " +
-					"SET RG = ?, CPF = ?, Name = ?, Email = ?, Street = ?, " +
-					"Number = ?, Complement = ?, PostalCode = ? " +
-					"WHERE RG = ?");
+					"SET CPF = ?, Name = ?, Email = ?, Street = ?, " +
+					"Number = ?, Complement = ?, ZipCode = ? " +
+					"WHERE CPF = ?");
 			
 			deleteCustomer = connection.prepareStatement(
 					"DELETE FROM Customer " +
-					"WHERE RG = ?");
+					"WHERE CPF = ?");
 			
 			selectAllCustomers = connection.prepareStatement(
 					"SELECT * FROM Customer");
@@ -45,14 +45,13 @@ public class CustomerRepository {
 	
 	public int addCustomer(Customer customer) {
 		try {
-			insertNewCustomer.setString(1, customer.getRg());
-			insertNewCustomer.setString(2, customer.getCpf());
-			insertNewCustomer.setString(3, customer.getName());
-			insertNewCustomer.setString(4, customer.getEmail());
-			insertNewCustomer.setString(5, customer.getStreet());
-			insertNewCustomer.setInt(6, customer.getNumber());
-			insertNewCustomer.setString(7, customer.getComplement());
-			insertNewCustomer.setString(8, customer.getPostalCode());
+			insertNewCustomer.setString(1, customer.getCpf());
+			insertNewCustomer.setString(2, customer.getName());
+			insertNewCustomer.setString(3, customer.getEmail());
+			insertNewCustomer.setString(4, customer.getStreet());
+			insertNewCustomer.setString(5, customer.getNumber());
+			insertNewCustomer.setString(6, customer.getComplement());
+			insertNewCustomer.setString(7, customer.getZipCode());
 			
 			return insertNewCustomer.executeUpdate();
 		} catch (Exception e) {
@@ -62,17 +61,17 @@ public class CustomerRepository {
 		return 0;
 	}
 	
-	public int updateCustomer(Customer customer, String currentRg) {
+	public int updateCustomer(Customer customer, String currentCpf) {
 		try {
-			updateCustomer.setString(1, customer.getRg());
-			updateCustomer.setString(2, customer.getCpf());
-			updateCustomer.setString(3, customer.getName());
-			updateCustomer.setString(4, customer.getEmail());
-			updateCustomer.setString(5, customer.getStreet());
-			updateCustomer.setInt(6, customer.getNumber());
-			updateCustomer.setString(7, customer.getComplement());
-			updateCustomer.setString(8, customer.getPostalCode());
-			updateCustomer.setString(9, currentRg);
+			updateCustomer.setString(1, customer.getCpf());
+			updateCustomer.setString(2, customer.getName());
+			updateCustomer.setString(3, customer.getEmail());
+			updateCustomer.setString(4, customer.getStreet());
+			updateCustomer.setString(5, customer.getNumber());
+			updateCustomer.setString(6, customer.getComplement());
+			updateCustomer.setString(7, customer.getZipCode());
+			updateCustomer.setString(8, currentCpf);
+			
 			return updateCustomer.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -81,9 +80,9 @@ public class CustomerRepository {
 		return 0;
 	}
 	
-	public int deleteCustomer(String rg) {
+	public int deleteCustomer(String cpf) {
 		try {
-			deleteCustomer.setString(1, rg);
+			deleteCustomer.setString(1, cpf);
 			return deleteCustomer.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -103,9 +102,8 @@ public class CustomerRepository {
 						resultSet.getString(3),
 						resultSet.getString(4),
 						resultSet.getString(5), 
-						resultSet.getInt(6),
-						resultSet.getString(7),
-						resultSet.getString(8)));
+						resultSet.getString(6),
+						resultSet.getString(7)));
 			}
 			
 			return customers;

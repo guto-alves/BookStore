@@ -1,4 +1,4 @@
-package repository;
+package persistence;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,13 +9,13 @@ import java.util.List;
 
 import model.Author;
 
-public class AuthorRepository {
+public class AuthorDaoImpl {
 	private PreparedStatement insertAuthor;
 	private PreparedStatement selectAllAuthors;
 	private PreparedStatement updateAuthor;
 	private PreparedStatement deleteAuthor;
 	
-	public AuthorRepository() {
+	public AuthorDaoImpl() {
 		try {
 			Connection connection = Database.getConnection();
 			insertAuthor = connection.prepareStatement(
@@ -26,11 +26,11 @@ public class AuthorRepository {
 			updateAuthor = connection.prepareStatement(
 					"UPDATE Author " +
 					"SET FirstName = ?, LastName = ? " +
-					"WHERE FirstName = ? AND LastName = ?");
+					"WHERE ID = ?");
 			
 			deleteAuthor = connection.prepareStatement(
 					"DELETE FROM Author " + 
-					"WHERE FirstName = ? AND LastName = ?");
+					"WHERE ID = ?");
 			
 			selectAllAuthors = connection.prepareStatement(
 					"SELECT * FROM Author");
@@ -40,10 +40,10 @@ public class AuthorRepository {
 		}
 	}
 	
-	public int addAuthor(String firstName, String lastName) {
+	public int addAuthor(Author author) {
 		try {
-			insertAuthor.setString(1, firstName);
-			insertAuthor.setString(2, lastName);
+			insertAuthor.setString(1, author.getFirstName());
+			insertAuthor.setString(2, author.getLastName());
 			return insertAuthor.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -52,12 +52,11 @@ public class AuthorRepository {
 		return 0;
 	}
 	
-	public int updateAuthor(String firstName, String lastName, Author author) {
+	public int updateAuthor(Author author) {
 		try {
-			updateAuthor.setString(1, firstName);
-			updateAuthor.setString(2, lastName);
-			updateAuthor.setString(3, author.getFirstName());
-			updateAuthor.setString(4, author.getLastName());
+			updateAuthor.setString(1, author.getFirstName());
+			updateAuthor.setString(2, author.getLastName());
+			updateAuthor.setInt(3, author.getId());
 			return updateAuthor.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -68,8 +67,7 @@ public class AuthorRepository {
 	
 	public int deleteAuthor(Author author) {
 		try {
-			deleteAuthor.setString(1, author.getFirstName());
-			deleteAuthor.setString(2, author.getLastName());
+			deleteAuthor.setInt(1, author.getId());
 			return deleteAuthor.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -84,8 +82,9 @@ public class AuthorRepository {
 			
 			while(resultSet.next()) {
 				authors.add(new Author(
-						resultSet.getString(1),
-						resultSet.getString(2)));
+						resultSet.getInt("ID"),
+						resultSet.getString("FirstName"),
+						resultSet.getString("LastName")));
 			}
 			
 			return authors;
@@ -93,6 +92,6 @@ public class AuthorRepository {
 			e.printStackTrace();
 		}
 		
-		return null ;
+		return null;
 	}
 }

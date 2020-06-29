@@ -6,20 +6,20 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import model.Employee;
 import model.Role;
-import repository.EmployeeRepository;
+import persistence.EmployeeDaoImpl;
 
 public class EmployeeController {
 	public static final String DEFAULT_PASSWORD = "12345678";
 
-	private ObservableList<Employee> employeesList;
+	private ObservableList<Employee> employeesList; 
 	private Employee employeeSelected;
 	
-	private final EmployeeRepository employeeRepository;
+	private final EmployeeDaoImpl employeeDao;
 	
 	private boolean insertionMode; 
 
 	public EmployeeController() {
-		employeeRepository = new EmployeeRepository();
+		employeeDao = new EmployeeDaoImpl();
 		employeesList = FXCollections.observableArrayList();
 		getAllEmployees();
 	}
@@ -40,17 +40,17 @@ public class EmployeeController {
 		Employee employee = new Employee(name, phone, role,
 				email, password);
 		
-		int result = employeeRepository.addEmployee(employee);
+		int result = employeeDao.addEmployee(employee);
 
 		if (result == 1) {
 			getAllEmployees();
 			onEmployeeSelected(employee);
 			
-			displayAlert(AlertType.INFORMATION, "Funcionário Adicionado", 
-					"Funcionário adicionado com sucesso!");
+			displayAlert(AlertType.INFORMATION, "Employee Added", 
+					"Employee successfully added.");
 		} else {
-			displayAlert(AlertType.ERROR, "Funcionário Não Adicionado",
-					"Erro ao adicionar o funcionário!");
+			displayAlert(AlertType.ERROR, "Employee Not Added",
+					"Unable to add employee.");
 		}
 	}
 	
@@ -59,15 +59,15 @@ public class EmployeeController {
 		Employee employee = new Employee(employeeSelected.getId(),
 				name, phone, role, email, password);
 		
-		int result = employeeRepository.updateEmployee(employee);
+		int result = employeeDao.updateEmployee(employee);
 
 		if (result == 1) {
 			getAllEmployees();
-			displayAlert(AlertType.INFORMATION, "Funcionário Atualizado",
-					"Funcionário atualizado com sucesso!");
+			displayAlert(AlertType.INFORMATION, "Employee Updated",
+					"Employee successfully updated!");
 		} else {
-			displayAlert(AlertType.ERROR, "Funcionário Não Atualizado",
-					"Erro ao atualizar o funcionário!");
+			displayAlert(AlertType.ERROR, "Employee Not Updated",
+					"Unable to update employee.");
 		}
 	}
 	
@@ -76,21 +76,21 @@ public class EmployeeController {
 			return;
 		}
 		
-		int result = employeeRepository.deleteEmployee(
+		int result = employeeDao.deleteEmployee(
 				employeeSelected.getId());
 		
 		if (result == 1) {
 			employeesList.remove(employeeSelected);
-			displayAlert(AlertType.INFORMATION, "Funcionário Excluído",
-					"Funcionário excluído com sucesso!");
+			displayAlert(AlertType.INFORMATION, "Employee Deleted",
+					"Employee successfully deleted.");
 		} else {
-			displayAlert(AlertType.ERROR, "Funcionário Não Excluído", 
-					"Não foi possível excluir a funcionário selecionado!");
+			displayAlert(AlertType.ERROR, "Employee Not Deleted", 
+					"Unable to delete employee.");
 		}
 	}
 
 	private void getAllEmployees() {
-		employeesList.setAll(employeeRepository.getAllEmployees());
+		employeesList.setAll(employeeDao.getAllEmployees());
 	}
 	
 	public ObservableList<Employee> getEmployeesList() {

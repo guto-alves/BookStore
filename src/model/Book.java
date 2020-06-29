@@ -5,24 +5,25 @@ public class Book {
 	private String title;
 	private String description;
 	private int editionNumber;
-	private int year;
+	private String year;
+	private double price;
+	private int copies;
 	private Category category;
 	private Publisher publisher;
-
-	public Book(String isbn, String title, String description, 
-			int editionNumber, int year, String nomeEditora) {
-		this(isbn, title, description, editionNumber, year, null,
-				new Publisher(nomeEditora));
+	
+	public Book() {
 	}
 
 	public Book(String isbn, String title, String description, 
-			int editionNumber, int year, Category category,
-			Publisher publisher) {
+			int editionNumber, String year, double price, int copies,
+			Category category, Publisher publisher) {
 		this.isbn = isbn;
 		this.title = title;
 		this.description = description;
 		this.editionNumber = editionNumber;
 		this.year = year;
+		this.price = price;
+		this.copies = copies;
 		this.category = category;
 		this.publisher = publisher;
 	}
@@ -59,12 +60,28 @@ public class Book {
 		this.editionNumber = editionNumber;
 	}
 
-	public int getYear() {
+	public String getYear() {
 		return year;
 	}
 
-	public void setYear(int year) {
+	public void setYear(String year) {
 		this.year = year;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public int getCopies() {
+		return copies;
+	}
+
+	public void setCopies(int copies) {
+		this.copies = copies;
 	}
 
 	public Category getCategory() {
@@ -83,10 +100,17 @@ public class Book {
 		this.publisher = publisher;
 	}
 
+	@Override 
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Book)) {
+			return false;
+		}
+		
+		return getIsbn().equals(((Book) obj).getIsbn());
+	}
+	
 	@Override
 	public String toString() {
-		return String.format("%s, %s, %s", 
-				title, editionNumber, publisher.getName());
+		return String.format("%s, %s, %s", title, editionNumber, publisher.getName());
 	}
-
 }

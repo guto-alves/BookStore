@@ -1,4 +1,4 @@
-package repository;
+package persistence;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,23 +9,24 @@ import java.util.List;
 
 import model.Publisher;
 
-public class PublisherRepository {
+public class PublisherDaoImpl {
 	private PreparedStatement insertNewPublisher;
 	private PreparedStatement selectAllPublishers;
 	private PreparedStatement updatePublisher;
 	private PreparedStatement deletePublisher;
 	
-	public PublisherRepository() {
+	public PublisherDaoImpl() {
 		try {
 			Connection connection = Database.getConnection();
 			insertNewPublisher = connection.prepareStatement(
 					"INSERT INTO Publisher " +
-					"(Name, Address, Phone) " +
-					"VALUES (?, ?, ?)");
+					"(Name, Phone, Street, Number, Complement) " +
+					"VALUES (?, ?, ?, ?, ?)");
 			
 			updatePublisher = connection.prepareStatement(
 					"UPDATE Publisher " +
-					"SET Name = ?, Address = ?, Phone = ? " +
+					"SET Name = ?, Phone = ?, Street = ? , Number = ?, " +
+					"Complement = ? " +
 					"WHERE Name = ?");
 			
 			deletePublisher = connection.prepareStatement(
@@ -43,8 +44,10 @@ public class PublisherRepository {
 	public int addPublisher(Publisher publisher) {
 		try {
 			insertNewPublisher.setString(1, publisher.getName());
-			insertNewPublisher.setString(2, publisher.getAddress());
-			insertNewPublisher.setString(3, publisher.getPhone());
+			insertNewPublisher.setString(2, publisher.getPhone());
+			insertNewPublisher.setString(3, publisher.getStreet());
+			insertNewPublisher.setString(4, publisher.getNumber());
+			insertNewPublisher.setString(5, publisher.getComplement());
 			return insertNewPublisher.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -53,13 +56,14 @@ public class PublisherRepository {
 		return 0;
 	}
 	
-	public int updatePublisher(String name, String address, String phone, 
-			String currentName) {
+	public int updatePublisher(Publisher publisher, String currentName) {
 		try {
-			updatePublisher.setString(1, name);
-			updatePublisher.setString(2, address);
-			updatePublisher.setString(3, phone);
-			updatePublisher.setString(4, currentName);
+			updatePublisher.setString(1, publisher.getName());
+			updatePublisher.setString(2, publisher.getPhone());
+			updatePublisher.setString(3, publisher.getStreet());
+			updatePublisher.setString(4, publisher.getNumber());
+			updatePublisher.setString(5, publisher.getComplement());
+			updatePublisher.setString(6, currentName);
 			return updatePublisher.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -87,7 +91,9 @@ public class PublisherRepository {
 				publishers.add(new Publisher(
 						resultSet.getString(1),
 						resultSet.getString(2),
-						resultSet.getString(3)));
+						resultSet.getString(3),
+						resultSet.getString(4),
+						resultSet.getString(5)));
 			}
 			
 			return publishers;

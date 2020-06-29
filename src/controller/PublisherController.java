@@ -6,23 +6,24 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert.AlertType;
 import model.Publisher;
-import repository.PublisherRepository;
+import persistence.PublisherDaoImpl;
 
 public class PublisherController {
 	private ObservableList<Publisher> publishersList;
-	private ObjectProperty<Publisher> publisherSelected = new SimpleObjectProperty<>();
+	private ObjectProperty<Publisher> publisherSelected;
 
 	private ObjectProperty<Object[]> warningInfo = new SimpleObjectProperty<>();
 	
+	private final PublisherDaoImpl publisherRepository;
+
 	private boolean insertionMode = true;
 	
-	private final PublisherRepository publisherRepository;
-
-	private boolean insertionResult;
-	
 	public PublisherController() {
-		publisherRepository = new PublisherRepository();
+		publisherRepository = new PublisherDaoImpl();
+		
 		publishersList = FXCollections.observableArrayList();
+		publisherSelected = new SimpleObjectProperty<>();
+		
 		getAllPublishers();
 	}
 	
@@ -31,43 +32,51 @@ public class PublisherController {
 		publisherSelected.set(publisher);
 	}
 
-	public void onActionButtonPressed(String name, String address, String phone) {
+	public void onActionButtonPressed(String name, String phone, String street,
+			String number, String complement) {
 		if (insertionMode) {
-			addPublisher(name, address, phone);
+			addPublisher(name, phone, street, number, complement);
 		} else {
-			updatePublisher(name, address, phone);
+			updatePublisher(name, phone, street, number, complement);
 		}
 	}
 	
-	public void addPublisher(String name, String address, String phone) {
-		Publisher publisher = new Publisher(name, address, phone);
+	public void addPublisher(String name, String phone, String street,
+			String number, String complement) {
+		Publisher publisher = new Publisher(name, phone, street, number,
+				complement);
 		
 		int result = publisherRepository.addPublisher(publisher);
 
 		if (result == 1) {
 			getAllPublishers();
-			publisherSelected.set(publisher);
+			onPublisherSelected(null);
 			warningInfo.set(new Object[] { AlertType.INFORMATION, 
-					"Editora Adicionada", "Editora adicionada com sucesso!" });
+					"Publisher Added", "New Publisher successfully added." });
 		} else {
-			insertionResult = false;
 			warningInfo.set(new Object[] { AlertType.ERROR,
-					"Editora Não Adicionada", "Erro ao adicionar editora!" });
+					"Publisher Not Added", "Error adding publisher." });
 		}
 	}
 
-	public void updatePublisher(String name, String address, String phone) {
+	public void updatePublisher(String name, String phone, String street,
+			String number, String complement) {
+		Publisher publisher = new Publisher(name, phone, street, number,
+				complement);
+		
 		int result = publisherRepository.updatePublisher(
-				name, address, phone, publisherSelected.get().getName());
+				publisher, publisherSelected.get().getName());
 
 		if (result == 1) {
 			getAllPublishers();
 			onPublisherSelected(null);
 			warningInfo.set(new Object[] { AlertType.INFORMATION, 
-							"Editora Atualizada", "Editora atualizada com sucesso!" });
+							"Publisher Updated", 
+							"Publisher successfully updated." });
 		} else {
 			warningInfo.set(new Object[] { AlertType.ERROR, 
-					"Editora Não Atualizada", "Erro ao atualizar editora!" });
+					"Publisher Not Updated", 
+					"Unable to update publisher." });
 		}
 	}
 
@@ -81,10 +90,12 @@ public class PublisherController {
 
 		if (result == 1) {
 			warningInfo.set(new Object[] { AlertType.INFORMATION, 
-							"Editora Excluído", "Editora excluída com sucesso!" });
+							"Publisher Deleted",
+							"Publisher successfully deleted!" });
 		} else {
-			warningInfo.set(new Object[] { AlertType.ERROR, "Editora Não Excluído",
-					"Não foi possível excluir editora selecionada!" });
+			warningInfo.set(new Object[] { AlertType.ERROR,
+					"Publisher Not Excluded",
+					"Could not delete selected publisher!" });
 		}
 
 		publishersList.remove(publisherSelected.get());
@@ -108,10 +119,6 @@ public class PublisherController {
 	
 	public boolean isInsertionMode() {
 		return insertionMode;
-	}
-	
-	public boolean getInsertResult() {
-		return insertionResult;
 	}
 
 }

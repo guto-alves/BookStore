@@ -34,11 +34,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import model.Customer;
 
-public class CustomerView {
-	private BorderPane root = new BorderPane();
-
+public class CustomerView extends BorderPane {
 	private TextField nameTextField;
-	private TextField rgTextField;
 	private TextField cpfTextField;
 	private TextField emailTextField;
 	private TextField phoneTextField;
@@ -48,7 +45,7 @@ public class CustomerView {
 	private TextField streetTextField;
 	private TextField numberTextField;
 	private TextField complementTextField;
-	private TextField postalCodeTextField;
+	private TextField zipCodeTextField;
 
 	private Button saveButton;
 	private Button cancelButton;
@@ -58,21 +55,25 @@ public class CustomerView {
 	private TextField filterTextField;
 	private TableView<Customer> tableView;
 
-	private final CustomerController controller = new CustomerController();
+	private final CustomerController controller;
 
 	public CustomerView() {
+		controller = new CustomerController();
 		createLayout();
 		initialize();
 	}
-	
+
 	private void createLayout() {
-		tableView = new TableView<>();
 		filterTextField = new TextField();
-		FlowPane flowPane = new FlowPane(8, 8, new Label("Filtrar por"), filterTextField);
-		flowPane.setPadding(new Insets(16));
+		FlowPane filterFlowPane = new FlowPane(8, 8, 
+				new Label("Filter"), filterTextField);
+		filterFlowPane.setPadding(new Insets(16));
+		
+		tableView = new TableView<>();
+		
 		BorderPane borderPane = new BorderPane();
-		borderPane.setPadding(new Insets(8)); 
-		borderPane.setTop(flowPane);
+		borderPane.setPadding(new Insets(8));
+		borderPane.setTop(filterFlowPane);
 		borderPane.setCenter(tableView);
 
 		GridPane gridPane = new GridPane();
@@ -80,18 +81,18 @@ public class CustomerView {
 		gridPane.setHgap(10);
 		gridPane.setVgap(10);
 		ColumnConstraints columnConstraints = new ColumnConstraints();
-		columnConstraints.setHalignment(HPos.RIGHT); 
+		columnConstraints.setHalignment(HPos.RIGHT);
 		gridPane.getColumnConstraints().add(columnConstraints);
 
 		nameTextField = new TextField();
-		nameTextField.setPrefWidth(200);
-		rgTextField = new TextField();
-		rgTextField.setTextFormatter(new TextFormatter<>(text -> { 
-			text.setText(text.getText().matches("[0-9]") ? text.getText() : "");
+		nameTextField.setPrefWidth(220);
+
+		cpfTextField = new TextField();
+		cpfTextField.setTextFormatter(new TextFormatter<>(text -> {
+			text.setText(text.getText().matches("[0-9]+") ? text.getText() : ""); 
 			return text;
-		}));
+		})); 
 		
-		cpfTextField = new TextField(); 
 		emailTextField = new TextField();
 
 		phoneTextField = new TextField();
@@ -102,11 +103,12 @@ public class CustomerView {
 		VBox addressVBox = new VBox(8);
 		addressVBox.setAlignment(Pos.TOP_CENTER);
 		addressVBox.setBorder(new Border(
-				new BorderStroke(Color.DEEPSKYBLUE, BorderStrokeStyle.SOLID,
+				new BorderStroke(
+						Color.BLUE, BorderStrokeStyle.SOLID,
 						CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-		Text text = new Text("Endereço");
-		text.setFill(Color.DEEPSKYBLUE);
+		Text text = new Text("Address");
+		text.setFill(Color.BLUE);
 
 		GridPane addressGridPane = new GridPane();
 		addressGridPane.setPadding(new Insets(16));
@@ -117,42 +119,36 @@ public class CustomerView {
 		streetTextField = new TextField();
 		numberTextField = new TextField();
 		complementTextField = new TextField();
-		postalCodeTextField = new TextField();
-		addressGridPane.addRow(0, new Label("Logradouro"), streetTextField);
-		addressGridPane.addRow(1, new Label("Número"), numberTextField);
+		zipCodeTextField = new TextField();
+		addressGridPane.addRow(0, new Label("Street"), streetTextField);
+		addressGridPane.addRow(1, new Label("Number"), numberTextField);
 		addressGridPane.addRow(2, new Label("Compl."), complementTextField);
-		addressGridPane.addRow(3, new Label("CEP"), postalCodeTextField);
+		addressGridPane.addRow(3, new Label("Zip Code"), zipCodeTextField);
 		addressVBox.getChildren().addAll(text, addressGridPane);
 
-		saveButton = new Button("Adicionar");
-		cancelButton = new Button("Cancelar");
+		saveButton = new Button("Register");
+		cancelButton = new Button("Cancel");
 
 		warningText = new Text();
 		warningText.setFill(Color.FIREBRICK);
 		GridPane.setHalignment(warningText, HPos.CENTER);
 
-		Label phonesLabel = new Label("Telefone(s)");
+		Label phonesLabel = new Label("Phone(s)"); 
 		GridPane.setValignment(phonesLabel, VPos.TOP);
-		gridPane.addRow(0, new Label("Nome"), nameTextField);
-		gridPane.addRow(1, new Label("RG"), rgTextField);
-		gridPane.addRow(2, new Label("CPF"), cpfTextField);
-		gridPane.addRow(3, new Label("Email"), emailTextField);
-		gridPane.addRow(4, phonesLabel,
-				new VBox(8, new HBox(phoneTextField, addPhoneButton), 
-						phonesListView));
-		gridPane.addRow(5, addressVBox);
-		gridPane.add(new HBox(16, cancelButton, saveButton), 1, 6);
-		gridPane.add(warningText, 1, 7);
+		gridPane.addRow(0, new Label("Name"), nameTextField);
+		gridPane.addRow(1, new Label("CPF"), cpfTextField);
+		gridPane.addRow(2, new Label("Email"), emailTextField);
+		gridPane.addRow(3, phonesLabel, new VBox(8, new HBox(phoneTextField, addPhoneButton), phonesListView));
+		gridPane.addRow(4, addressVBox);
+		gridPane.add(new HBox(16, cancelButton, saveButton), 1, 5);
+		gridPane.add(warningText, 1, 6);
 
-		root.setCenter(new SplitPane(borderPane, gridPane));
+		setCenter(new SplitPane(borderPane, gridPane));
 	}
-	
-	private void initialize() {
-		TableColumn<Customer, String> nameColumn = new TableColumn<>("Nome");
-		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-		TableColumn<Customer, String> rgColumn = new TableColumn<>("RG");
-		rgColumn.setCellValueFactory(new PropertyValueFactory<>("rg"));
+	private void initialize() {
+		TableColumn<Customer, String> nameColumn = new TableColumn<>("Name");
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
 		TableColumn<Customer, String> cpfColumn = new TableColumn<>("CPF");
 		cpfColumn.setCellValueFactory(new PropertyValueFactory<>("cpf"));
@@ -160,55 +156,52 @@ public class CustomerView {
 		TableColumn<Customer, String> emailColumn = new TableColumn<>("Email");
 		emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
 
-		tableView.getColumns().setAll(nameColumn, rgColumn, cpfColumn, emailColumn);
+		tableView.getColumns().setAll(nameColumn, cpfColumn, emailColumn);
 
 		tableView.widthProperty().addListener((observable, oldValue, newValue) -> {
 			double width = newValue.doubleValue();
-			nameColumn.setPrefWidth(width * 0.25);
-			rgColumn.setPrefWidth(width * 0.25);
-			cpfColumn.setPrefWidth(width * 0.25);
-			emailColumn.setPrefWidth(width * 0.25);
+			nameColumn.setPrefWidth(width * 0.34);
+			cpfColumn.setPrefWidth(width * 0.33);
+			emailColumn.setPrefWidth(width * 0.33);
 		});
 
-		tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-			controller.setCustomerSelected(newValue);
-		
-			if (newValue == null) {
-				nameTextField.setText("");
-				rgTextField.setText("");
-				cpfTextField.setText("");
-				emailTextField.setText("");
-				phonesListView.getItems().clear();
-				
-				streetTextField.setText("");
-				numberTextField.setText("");
-				complementTextField.setText("");
-				postalCodeTextField.setText("");
-				
-				saveButton.setText("Adicionar");
-			} else {
-				nameTextField.setText(newValue.getName());
-				rgTextField.setText(newValue.getRg());
-				cpfTextField.setText(newValue.getCpf());
-				emailTextField.setText(newValue.getEmail());
-				phonesListView.getItems().setAll(controller.getPhones());
-				streetTextField.setText(newValue.getStreet());
-				numberTextField.setText(String.valueOf(
-						newValue.getNumber()));
-				complementTextField.setText(newValue.getComplement());
-				postalCodeTextField.setText(newValue.getPostalCode());
-				
-				saveButton.setText("Atualizar");
-			}
-		});
+		tableView.getSelectionModel().selectedItemProperty()
+			.addListener((observable, oldValue, newValue) -> {
+				controller.setCustomerSelected(newValue);
+	
+				if (newValue == null) {
+					nameTextField.setText("");
+					cpfTextField.setText("");
+					emailTextField.setText("");
+					streetTextField.setText("");
+					numberTextField.setText("");
+					complementTextField.setText("");
+					zipCodeTextField.setText("");
+					
+					phonesListView.getItems().clear();
+	
+					saveButton.setText("Register");
+				} else {
+					nameTextField.setText(newValue.getName());
+					cpfTextField.setText(newValue.getCpf());
+					emailTextField.setText(newValue.getEmail());
+					streetTextField.setText(newValue.getStreet());
+					numberTextField.setText(String.valueOf(newValue.getNumber()));
+					complementTextField.setText(newValue.getComplement());
+					zipCodeTextField.setText(newValue.getZipCode());
+					
+					phonesListView.getItems().setAll(controller.getAllPhones()); 
+	
+					saveButton.setText("Update");
+				}
+			});
 
-		MenuItem excluirMenuItem = new MenuItem("Excluir");
+		MenuItem excluirMenuItem = new MenuItem("Delete");
 		excluirMenuItem.setAccelerator(KeyCombination.keyCombination("DELETE"));
 		excluirMenuItem.setOnAction(event -> controller.deleteCustomer());
 		tableView.setContextMenu(new ContextMenu(excluirMenuItem));
 
-		FilteredList<Customer> filteredList = new FilteredList<>(
-				controller.getCustomersList());
+		FilteredList<Customer> filteredList = new FilteredList<>(controller.getCustomersList());
 		filterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
 			filteredList.setPredicate(customer -> {
 				if (newValue == null || newValue.isBlank()) {
@@ -218,14 +211,13 @@ public class CustomerView {
 				String text = newValue.toLowerCase();
 
 				try {
-					if (customer.getRg().toLowerCase().contains(text)
-							|| customer.getCpf().toLowerCase().contains(text)
+					if (customer.getCpf().toLowerCase().contains(text)
 							|| customer.getName().toLowerCase().contains(text)
 							|| customer.getEmail().toLowerCase().contains(text)) {
 						return true;
 					}
 				} catch (NullPointerException ignored) {
-				} 
+				}
 
 				return false;
 			});
@@ -236,47 +228,41 @@ public class CustomerView {
 
 		phoneTextField.setOnAction(event -> {
 			phonesListView.getItems().add(phoneTextField.getText());
+			phonesListView.scrollTo(phoneTextField.getText());
+			phonesListView.getSelectionModel().select(phoneTextField.getText());
 			phoneTextField.setText("");
 		});
 		addPhoneButton.setOnAction(event -> {
 			phonesListView.getItems().add(phoneTextField.getText());
+			phonesListView.scrollTo(phoneTextField.getText());
+			phonesListView.getSelectionModel().select(phoneTextField.getText());
 			phoneTextField.setText("");
 		});
-		
-		MenuItem removePhoneMenuItem = new MenuItem("Remover");
+
+		MenuItem removePhoneMenuItem = new MenuItem("Remove");
 		removePhoneMenuItem.setOnAction(event -> {
 			phonesListView.getItems().remove(
 					phonesListView.getSelectionModel().getSelectedIndex());
 		});
 		phonesListView.setContextMenu(new ContextMenu(removePhoneMenuItem));
-		
+
 		cancelButton.setOnAction(event -> {
 			tableView.getSelectionModel().clearSelection();
 		});
 
 		saveButton.setOnAction(event -> {
-			if (saveButton.getText().contains("Adicionar")) {
-				controller.addCustomer(
-						rgTextField.getText(), cpfTextField.getText(),
-						nameTextField.getText(), emailTextField.getText(), 
-						phonesListView.getItems(),
-						streetTextField.getText(), numberTextField.getText(),
-						complementTextField.getText(), postalCodeTextField.getText());
+			if (saveButton.getText().contains("Register")) {
+				controller.addCustomer(cpfTextField.getText(), nameTextField.getText(),
+						emailTextField.getText(), phonesListView.getItems(), streetTextField.getText(),
+						numberTextField.getText(), complementTextField.getText(), zipCodeTextField.getText());
 			} else {
-				controller.updateCustomer(
-						rgTextField.getText(), cpfTextField.getText(),
-						nameTextField.getText(), emailTextField.getText(), 
-						phonesListView.getItems(),
-						streetTextField.getText(), numberTextField.getText(),
-						complementTextField.getText(), postalCodeTextField.getText());
+				controller.updateCustomer(cpfTextField.getText(), nameTextField.getText(),
+						emailTextField.getText(), phonesListView.getItems(), streetTextField.getText(),
+						numberTextField.getText(), complementTextField.getText(), zipCodeTextField.getText());
 			}
 		});
-		
-		warningText.textProperty().bind(controller.getWarning());
-	}
 
-	public BorderPane getRoot() {
-		return root;
+		warningText.textProperty().bind(controller.getWarning());
 	}
 
 }

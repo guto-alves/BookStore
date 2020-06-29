@@ -2,7 +2,7 @@ package view;
 
 import controller.LoginController;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
+import javafx.concurrent.Task; 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -39,7 +39,7 @@ public class LoginView {
 		this.callback = callback;
 		
 		dialog = new Dialog<>();
-		dialog.setTitle("Biblioteca");
+		dialog.setTitle("Book Store");
 		dialog.getDialogPane().setBackground(new Background(
 				new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
 		dialog.setResizable(true);
@@ -49,30 +49,30 @@ public class LoginView {
 		grid.setVgap(10);
 		grid.setPadding(new Insets(25, 25, 0, 25));
 
-		ColumnConstraints columnConstraints1 = new ColumnConstraints(50, 50, 50);
+		ColumnConstraints columnConstraints1 = new ColumnConstraints(60, 60, 60);
 		ColumnConstraints columnConstraints2 = new ColumnConstraints(50, 250, 250);
 		columnConstraints2.setMaxWidth(Double.MAX_VALUE);
 		columnConstraints2.setHgrow(Priority.ALWAYS);
 		grid.getColumnConstraints().addAll(columnConstraints1, columnConstraints2);
 
-		title = new Text("Bem-Vindo");
+		title = new Text("Welcome");
 		title.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
 
 		TextField email = new TextField();
 		email.setPromptText("Email");
 
 		PasswordField password = new PasswordField();
-		password.setPromptText("Senha");
+		password.setPromptText("Password");
 
-		Button loginButton = new Button("Entrar");
+		Button loginButton = new Button();
 		loginButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-		Text text = new Text("Entrar");
+		Text text = new Text("Sign in");
 		text.setFont(Font.font("Serif", FontWeight.SEMI_BOLD, 16)); 
 		text.setFill(Color.WHITE);
 		loginButton.setGraphic(text);
 		loginButton.setPadding(new Insets(5, 25, 5, 25));
 		loginButton.setBackground(new Background(
-				new BackgroundFill(Color.CORNFLOWERBLUE, new CornerRadii(5), Insets.EMPTY)));
+				new BackgroundFill(Color.BLUE, new CornerRadii(5), Insets.EMPTY)));
 		loginButton.setDisable(true);
 		GridPane.setHalignment(loginButton, HPos.RIGHT);
 
@@ -82,11 +82,11 @@ public class LoginView {
 
 		grid.add(title, 0, 0, 2, 1);
 		grid.addRow(1, new Label("Email:"), email);
-		grid.addRow(2, new Label("Senha:"), password);
+		grid.addRow(2, new Label("Password:"), password);
 		grid.add(loginButton, 1, 3);
 		grid.add(warningText, 1, 4);
 
-		ButtonType buttonType = new ButtonType("Entrar", ButtonData.OK_DONE);
+		ButtonType buttonType = new ButtonType("Sign in", ButtonData.OK_DONE);
 		dialog.getDialogPane().getButtonTypes().add(buttonType);
 		Node buttonTypeNode = dialog.getDialogPane().lookupButton(buttonType);
 		buttonTypeNode.setDisable(true);
@@ -120,9 +120,9 @@ public class LoginView {
 	
 	private void login(String email, String password) {
 		if (controller.login(email, password)) {
-			title.setText("Bem-Vindo, " + EmployeeOn.employee.getName().split(" ")[0]);
+			title.setText("Welcome, " + EmployeeOn.employee.getName().split(" ")[0]);
 			warningText.setFill(Color.BLUE);
-			warningText.setText("Aguarde ...");
+			warningText.setText("Wait ...");
 
 			Task<Void> close = new Task<>() {
 
@@ -139,7 +139,8 @@ public class LoginView {
 				callback.call(true);
 			});
 		} else {
-			warningText.setText("Email ou senha inválidos.");
+			warningText.setText("Invalid email or password.");
+			callback.call(false);
 		}
 	}
 

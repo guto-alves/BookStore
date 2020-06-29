@@ -9,79 +9,78 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import model.Customer;
-import repository.CustomerRepository;
-import repository.PhoneRepository;
+import persistence.CustomerDaoImpl;
+import persistence.PhoneDaoImpl;
 
 public class CustomerController {
 	private Customer customerSelected;
 	
 	private ObservableList<Customer> customersList;
-	private ObservableList<String> phonesList;
 	
-	private final CustomerRepository customerRepository;
-	private final PhoneRepository phoneRepository;
+	private final CustomerDaoImpl customerDao;
+	private final PhoneDaoImpl phoneDao;
 	
 	private StringProperty warning = new SimpleStringProperty();
 
 	public CustomerController() {
-		customerRepository = new CustomerRepository();
-		phoneRepository = new PhoneRepository();
+		customerDao = new CustomerDaoImpl();
+		phoneDao = new PhoneDaoImpl();
+		
 		customersList = FXCollections.observableArrayList();
-		phonesList = FXCollections.observableArrayList();
+		
 		getAllCustomers();
 	}
 
-	private boolean hasInvalidFields(String... fields) {
-		for (String string : fields) {
-			if (string.isBlank()) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	private boolean hasInvalidFields(String... fields) {
+//		for (String string : fields) {
+//			if (string.isBlank()) {
+//				return true;
+//			}
+//		}
+//		
+//		return false;
+//	}
 
-	public void addCustomer(String rg, String cpf, String name, 
+	public void addCustomer(String cpf, String name, 
 			String email, List<String> phones, String street, String number,
-			String complement, String postalCode) {
-		Customer customer = new Customer(rg, cpf, name, email, street, 
-				Integer.parseInt(number), complement, postalCode);
+			String complement, String zipCode) {
+		Customer customer = new Customer(cpf, name, email, street, 
+				number, complement, zipCode);
 	
-		int result = customerRepository.addCustomer(customer);
+		int result = customerDao.addCustomer(customer);
 		
-		phoneRepository.addPhones(phones, rg);
+		phoneDao.addPhones(phones, cpf);
 
 		if (result == 1) {
-			displayAlert(AlertType.INFORMATION, "Cliente Adicionado",
-					"Cliente adicionado com sucesso!");
+			getAllCustomers();
+			displayAlert(AlertType.INFORMATION, "Customer Added",
+					"Customer successfully added!");
 		} else {
-			displayAlert(AlertType.ERROR, "Cliente Não Adicionado",
-					"Erro ao adicionar o cliente!");
-		}
-
-		getAllCustomers();
-//		tableView.getSelectionModel().selectLast();
+			displayAlert(AlertType.ERROR, "Customer Not Added",
+					"Unable to add customer.");
+		}	
 	}
 
-	public void updateCustomer(String rg, String cpf, String name, 
+	public void updateCustomer(String cpf, String name, 
 			String email, List<String> phones, String street, String number,	
-			String complement, String postalCode) {
-		Customer customer = new Customer(rg, cpf, name, email, street, 
-				Integer.parseInt(number), complement, postalCode);
+			String complement, String zipCode) {
+		Customer customer = new Customer(cpf, name, email, street, 
+				number, complement, zipCode);
 		
-		int result = customerRepository.updateCustomer(customer,
-				customerSelected.getRg());
+		int result = customerDao.updateCustomer(customer,
+				customerSelected.getCpf());
 	
-		phoneRepository.updatePhones(phones, rg);
+		phoneDao.updatePhones(phones, cpf);
 		
 		if (result == 1) {
-			displayAlert(AlertType.INFORMATION, "Cliente Atualizado",
-					"Cliente atualizado com sucesso!");
+			getAllCustomers();
+			
+			displayAlert(AlertType.INFORMATION, "Customer Updated",
+					"Customer successfully updated.");
 		} else {
-			displayAlert(AlertType.ERROR, "Cliente Não Atualizado",
-					"Erro ao atualizar o cliente!");
+			displayAlert(AlertType.ERROR, "Customer Not Updated",
+					"Unable to update customer.");
 		}
-
-		getAllCustomers();
 	}
 
 	public void deleteCustomer() {
@@ -89,30 +88,35 @@ public class CustomerController {
 			return;
 		}
 		
-		int result = customerRepository.deleteCustomer(customerSelected.getRg());
+		phoneDao.deletePhones(customerSelected.getCpf());
+		
+		int result = customerDao.deleteCustomer(
+				customerSelected.getCpf());
 
 		if (result == 1) {
-			displayAlert(AlertType.INFORMATION, "Cliente Excluído",
-					"Cliente excluído com sucesso!");
+			customersList.remove(customerSelected);
+			
+			displayAlert(AlertType.INFORMATION, "Customer Deleted",
+					"Customer successfully deleted.");
 		} else {
-			displayAlert(AlertType.ERROR, "Cliente Não Excluído",
-					"Não foi possível excluir o cliente selecionado!");
+			displayAlert(AlertType.ERROR, "Customer Not Deleted",
+					"Unable to delete customer!");
 		}
-
-		customersList.remove(customerSelected);
 	}
 
 	private void getAllCustomers() {
-		customersList.setAll(customerRepository.getAllCustomers());
+		customersList.setAll(customerDao.getAllCustomers());
 	}
 	
-	public List<String> getPhones() {
-		return phoneRepository.getAllPhones(customerSelected.getRg());
+	public List<String> getAllPhones() {
+		return phoneDao.getAllPhones(
+				customerSelected.getCpf());
 	}
 
 	private void displayAlert(AlertType alertType, String title, String message) {
 		Alert alert = new Alert(alertType);
 		alert.setTitle(title);
+		alert.setHeaderText("Message");
 		alert.setContentText(message);
 		alert.show();
 	}

@@ -28,9 +28,7 @@ import javafx.scene.layout.VBox;
 import model.Employee;
 import model.Role;
 
-public class EmployeeView {
-	private BorderPane root = new BorderPane();
-
+public class EmployeeView extends BorderPane {
 	private TextField nameTextField;
 	private TextField phoneTextField;
 	private ComboBox<Role> rolesComboBox;
@@ -52,16 +50,14 @@ public class EmployeeView {
 	}
 
 	private void createLayout() {
-		root = new BorderPane();
-
 		tableView = new TableView<>();
 		filtedTextField = new TextField();
-		FlowPane flowPane = new FlowPane(8, 8, 
-				new Label("Filtrar por"), filtedTextField);
-		flowPane.setPadding(new Insets(16));
+		FlowPane filterFlowPane = new FlowPane(8, 8, 
+				new Label("Filter"), filtedTextField);
+		filterFlowPane.setPadding(new Insets(16));
 		BorderPane borderPane = new BorderPane();
 		borderPane.setPadding(new Insets(8));
-		borderPane.setTop(flowPane);
+		borderPane.setTop(filterFlowPane);
 		borderPane.setCenter(tableView);
 
 		GridPane gridPane = new GridPane();
@@ -77,46 +73,46 @@ public class EmployeeView {
 		phoneTextField = new TextField();
 		rolesComboBox = new ComboBox<>();
 		emailTextField = new TextField();
-		PasswordField senhaPasswordField = new PasswordField();
+		PasswordField passwordField = new PasswordField();
 		passwordTextField = new TextField();
-		saveButton = new Button("Registrar");
-		updateButton = new Button("Atualizar");
+		saveButton = new Button("Register");
+		updateButton = new Button("Update");
 		updateButton.setManaged(false);
-		cancelButton = new Button("Cancelar");
+		cancelButton = new Button("Cancel");
 
-		CheckBox mostrarSenhaCheckBox = new CheckBox();
-		passwordTextField.managedProperty().bind(mostrarSenhaCheckBox.selectedProperty());
-		passwordTextField.visibleProperty().bind(mostrarSenhaCheckBox.selectedProperty());
-		senhaPasswordField.managedProperty().bind(mostrarSenhaCheckBox.selectedProperty().not());
-		senhaPasswordField.visibleProperty().bind(mostrarSenhaCheckBox.selectedProperty().not());
-		senhaPasswordField.textProperty().bindBidirectional(passwordTextField.textProperty());
+		CheckBox showPasswordCheckBox = new CheckBox();
+		passwordTextField.managedProperty().bind(showPasswordCheckBox.selectedProperty());
+		passwordTextField.visibleProperty().bind(showPasswordCheckBox.selectedProperty());
+		passwordField.managedProperty().bind(showPasswordCheckBox.selectedProperty().not());
+		passwordField.visibleProperty().bind(showPasswordCheckBox.selectedProperty().not());
+		passwordField.textProperty().bindBidirectional(passwordTextField.textProperty());
 
-		gridPane.addRow(0, new Label("Nome"), nameTextField);
-		gridPane.addRow(1, new Label("Telefone"), phoneTextField);
-		gridPane.addRow(2, new Label("Cargo"), rolesComboBox);
+		gridPane.addRow(0, new Label("Name"), nameTextField);
+		gridPane.addRow(1, new Label("Phone"), phoneTextField);
+		gridPane.addRow(2, new Label("Role"), rolesComboBox);
 		gridPane.addRow(3, new Label("Email"), emailTextField);
-		gridPane.addRow(4, new Label("Senha"), new VBox(8, 
-				new HBox(senhaPasswordField, passwordTextField),
-				new HBox(8, new Label("Mostrar Senha?"), mostrarSenhaCheckBox)));
+		gridPane.addRow(4, new Label("Password"), new VBox(8, 
+				new HBox(passwordField, passwordTextField),
+				new HBox(8, new Label("Mostrar Password?"), showPasswordCheckBox)));
 		gridPane.add(new HBox(16, cancelButton, updateButton, saveButton), 1, 5);
 
-		root.setCenter(new SplitPane(borderPane, gridPane));
+		setCenter(new SplitPane(borderPane, gridPane));
 	}
 
 	private void initialize() {
 		TableColumn<Employee, String> idColumn = new TableColumn<>("ID");
 		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-		TableColumn<Employee, String> nameColumn = new TableColumn<>("Nome");
+		TableColumn<Employee, String> nameColumn = new TableColumn<>("Name");
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-		TableColumn<Employee, String> phoneColumn = new TableColumn<>("Telefone");
+		TableColumn<Employee, String> phoneColumn = new TableColumn<>("Phone");
 		phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
 
 		TableColumn<Employee, String> emailColumn = new TableColumn<>("Email");
 		emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
 
-		TableColumn<Employee, String> roleColumn = new TableColumn<>("Cargo");
+		TableColumn<Employee, String> roleColumn = new TableColumn<>("Role");
 		roleColumn.setCellValueFactory(new PropertyValueFactory<>("role"));
 
 		tableView.getColumns().setAll(idColumn, nameColumn, phoneColumn, 
@@ -141,22 +137,21 @@ public class EmployeeView {
 					rolesComboBox.getSelectionModel().clearSelection();
 					emailTextField.setText("");
 					passwordTextField.setText(EmployeeController.DEFAULT_PASSWORD);
-					saveButton.setText("Registrar");
+					saveButton.setText("Register");
 				} else {
 					nameTextField.setText(newValue.getName());
 					phoneTextField.setText(newValue.getPhone());
 					rolesComboBox.getSelectionModel().select(newValue.getRole());
 					emailTextField.setText(newValue.getEmail());
 					passwordTextField.setText(newValue.getPassword());
-					saveButton.setText("Atualizar");
+					saveButton.setText("Update");
 				}
 			});
 
-		MenuItem excluirMenuItem = new MenuItem("Excluir");
+		MenuItem excluirMenuItem = new MenuItem("Delete");
 		excluirMenuItem.setOnAction(event -> controller.deleteEmployee());
 		tableView.setContextMenu(new ContextMenu(excluirMenuItem));
 
-		
 		FilteredList<Employee> filteredList = new FilteredList<>(controller.getEmployeesList());
 		
 		filtedTextField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -191,7 +186,7 @@ public class EmployeeView {
 		});
 
 		saveButton.setOnAction(event -> {
-			if (saveButton.getText().contains("Registrar")) {
+			if (saveButton.getText().contains("Register")) {
 				controller.addEmployee(
 						nameTextField.getText(), phoneTextField.getText(), 
 						rolesComboBox.getSelectionModel().getSelectedItem(), 
@@ -200,12 +195,8 @@ public class EmployeeView {
 				controller.updateEmployee(
 						nameTextField.getText(), phoneTextField.getText(), 
 						rolesComboBox.getSelectionModel().getSelectedItem(), 
-						emailTextField.getText(), passwordTextField.getText());
+						emailTextField.getText(), passwordTextField.getText()); 
 			}
 		});
-	}
-
-	public BorderPane getRoot() {
-		return root;
 	}
 }

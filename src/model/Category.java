@@ -4,6 +4,10 @@ public class Category {
 	private int id;
 	private String name;
 
+	public Category(String name) {
+		this.name = name;
+	}
+
 	public Category(int id, String name) {
 		this.id = id;
 		this.name = name;
@@ -25,4 +29,17 @@ public class Category {
 		this.name = name;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Category)) {
+			return false;
+		}
+		Category category = (Category) obj;
+		return getId() == category.getId();
+	}
+	
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

@@ -1,4 +1,4 @@
-package repository;
+package persistence;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,13 +10,13 @@ import java.util.List;
 
 import model.Category;
 
-public class CategoryRepository {
+public class CategoryDaoImpl {
 	private PreparedStatement insertCategory;
 	private PreparedStatement selectAllCategories;
 	private PreparedStatement updateCategory;
 	private PreparedStatement deleteCategory;
 	
-	public CategoryRepository() {
+	public CategoryDaoImpl() {
 		try {
 			Connection connection = Database.getConnection();
 			insertCategory = connection.prepareStatement(
@@ -44,14 +44,8 @@ public class CategoryRepository {
 	public int addCategory(Category category) {
 		try {
 			insertCategory.setString(1, category.getName());
-			
-			insertCategory.executeUpdate();
-			
-			ResultSet keysResultSet = insertCategory.getGeneratedKeys();
-			
-			keysResultSet.next();
-			
-			return keysResultSet.getInt(1);
+		
+			return insertCategory.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -59,10 +53,10 @@ public class CategoryRepository {
 		return 0;
 	}
 	
-	public int updateCategory(Category category, int id) {
+	public int updateCategory(Category category) {
 		try {
 			updateCategory.setString(1, category.getName());
-			updateCategory.setInt(2, id);
+			updateCategory.setInt(2, category.getId());
 			return updateCategory.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -71,9 +65,10 @@ public class CategoryRepository {
 		return 0;
 	}
 	
-	public int deleteCategory(String id) {
+	public int deleteCategory(Category category) {
 		try {
-			deleteCategory.setString(1, id);
+			deleteCategory.setInt(1, category.getId());
+			
 			return deleteCategory.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

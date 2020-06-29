@@ -2,14 +2,14 @@ package controller;
 
 import model.Employee;
 import model.EmployeeOn;
-import repository.EmployeeRepository;
+import persistence.EmployeeDaoImpl;
 
 public class LoginController {
-	private EmployeeRepository employeeRepository;
+	private EmployeeDaoImpl employeeRepository;
 	
 
 	public LoginController() {
-		employeeRepository = new EmployeeRepository();
+		employeeRepository = new EmployeeDaoImpl();
 	}
 	
 	public boolean login(String email, String password) {

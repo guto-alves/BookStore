@@ -1,4 +1,4 @@
-package repository;
+package persistence;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,27 +9,26 @@ import java.util.List;
 
 import model.Author;
 
-public class AuthorBookRepository {
+public class AuthorBookDaoImpl {
 	private PreparedStatement addAuthorBook;
 	private PreparedStatement selectAllAuthors;
 	private PreparedStatement deleteAuthorBook;
 	
-	public AuthorBookRepository() {
+	public AuthorBookDaoImpl() {
 		try {
 			Connection connection = Database.getConnection();
 			
 			addAuthorBook = connection.prepareStatement(
 					"INSERT INTO Author_Book " +
-					"(BookISBN, AuthorFirstName, AuthorLastName) " +
-					"VALUES (?, ?, ?)");
+					"(AuthorID, BookISBN) " +
+					"VALUES (?, ?)");
 			
 			selectAllAuthors = connection.prepareStatement(
-					"SELECT Author.FirstName, Author.LastName " +
+					"SELECT Author.ID, Author.FirstName, Author.LastName " +
 					"FROM Book INNER JOIN Author_Book " +
 							"ON Book.ISBN = Author_Book.BookISBN " +
 					"INNER JOIN Author " + 
-							"ON Author_Book.AuthorFirstName = Author.FirstName AND "
-							+ "Author_Book.AuthorLastName = Author.LastName " +
+							"ON Author_Book.AuthorID = Author.ID " + 
 					"WHERE Book.ISBN = ?");
 
 			deleteAuthorBook = connection.prepareStatement(
@@ -44,11 +43,12 @@ public class AuthorBookRepository {
 	public int add(String isbn, List<Author> authors) {
 		try {
 			for (Author author : authors) {
-				addAuthorBook.setString(1, isbn);
-				addAuthorBook.setString(2, author.getFirstName());
-				addAuthorBook.setString(3, author.getLastName());
-				addAuthorBook.executeUpdate();
+				addAuthorBook.setInt(1, author.getId());
+				addAuthorBook.setString(2, isbn);
+				addAuthorBook.addBatch();
 			}
+			
+			addAuthorBook.executeBatch();
 			
 			return 1;
 		} catch (SQLException e) {
@@ -69,6 +69,10 @@ public class AuthorBookRepository {
 		return 0;
 	}
 	
+	public void update(List<Author> authors, String isbn) {
+		delete(isbn);
+		add(isbn, authors);
+	}
 	public List<Author> getAllAuthorsOfTheBook(String isbn) {
 		try {
 			selectAllAuthors.setString(1, isbn);
@@ -77,7 +81,9 @@ public class AuthorBookRepository {
 			
 			while (resultSet.next()) {
 				authors.add(new Author(
-						resultSet.getString(1), resultSet.getString(2)));
+						resultSet.getInt(1),
+						resultSet.getString(2),
+						resultSet.getString(2)));
 			}
 			
 			return authors;

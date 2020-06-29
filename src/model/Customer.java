@@ -1,38 +1,31 @@
 package model;
 
 public class Customer {
-	private String rg;
 	private String cpf;
 	private String name;
 	private String email;
 	private String street;
-	private int number;
+	private String number;
 	private String complement;
-	private String postalCode;
+	private String zipCode;
 
-	public Customer(String rg) {
-		this.rg = rg;
+	public Customer() {
 	}
 
-	public Customer(String rg, String cpf, String name, String email, 
-			String street, int number, String complement,
-			String postalCode) {
-		this.rg = rg;
+	public Customer(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public Customer(String cpf, String name, String email, 
+			String street, String number, String complement,
+			String zipCode) {
 		this.cpf = cpf;
 		this.name = name;
 		this.email = email;
 		this.street = street;
 		this.number = number;
 		this.complement = complement;
-		this.postalCode = postalCode;
-	}
-
-	public String getRg() {
-		return rg;
-	}
-
-	public void setRg(String rg) {
-		this.rg = rg;
+		this.zipCode = zipCode;
 	}
 
 	public String getCpf() {
@@ -67,11 +60,11 @@ public class Customer {
 		this.street = street;
 	}
 
-	public int getNumber() {
+	public String getNumber() {
 		return number;
 	}
 
-	public void setNumber(int number) {
+	public void setNumber(String number) {
 		this.number = number;
 	}
 
@@ -83,12 +76,12 @@ public class Customer {
 		this.complement = complement;
 	}
 
-	public String getPostalCode() {
-		return postalCode;
+	public String getZipCode() {
+		return zipCode;
 	}
 
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
 	}
 
 	@Override
@@ -97,7 +90,7 @@ public class Customer {
 			return false;
 		}
 
-		return getRg().equals(((Customer) obj).getRg());
+		return getCpf().equals(((Customer) obj).getCpf());
 	}
 
 }

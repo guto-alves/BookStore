@@ -1,12 +1,26 @@
 package model;
 
 public class Author {
+	private int id;
 	private String firstName;
 	private String lastName;
 
 	public Author(String firstName, String lastName) {
+		this(0, firstName, lastName);
+	}
+	
+	public Author(int id, String firstName, String lastName) {
+		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {
@@ -31,12 +45,11 @@ public class Author {
 			return false;
 		}
 		Author author = (Author) obj;
-		return getFirstName().equals(author.getFirstName()) && 
-				getLastName().equals(author.getLastName());
+		return getId() == author.getId();
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s %s", firstName, lastName);
+		return getLastName() + ", " + getFirstName();
 	}
 }

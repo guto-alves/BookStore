@@ -8,6 +8,9 @@ public class Employee {
 	private String email;
 	private String password;
 
+	public Employee() {
+	}
+
 	public Employee(int id) {
 		this.id = id;
 	}
@@ -22,9 +25,9 @@ public class Employee {
 		this.id = id;
 		this.name = name;
 		this.phone = phone;
+		this.role = role;
 		this.email = email;
 		this.password = password;
-		this.role = role;
 	}
 
 	public int getId() {

@@ -1,4 +1,4 @@
-package repository;
+package persistence;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,16 +10,17 @@ import java.util.List;
 import model.Employee;
 import model.Role;
 
-public class EmployeeRepository {
+public class EmployeeDaoImpl { 
 	private PreparedStatement insertEmployee;
 	private PreparedStatement updateEmployee;
 	private PreparedStatement deleteEmployee;
 	private PreparedStatement selectAllEmployees;
 	private PreparedStatement selectEmployeeByEmailAndPassword;
 	
-	public EmployeeRepository() {
+	public EmployeeDaoImpl() {
 		try {
 			Connection connection = Database.getConnection();
+			
 			insertEmployee = connection.prepareStatement(
 					"INSERT INTO Employee " +
 					"(Name, Phone, Role, Email, Password) " +
@@ -28,7 +29,7 @@ public class EmployeeRepository {
 			updateEmployee = connection.prepareStatement(
 					"UPDATE Employee " +
 					"SET Name = ?, Phone = ?, Role = ?, Email = ?, " + 
-							"Password = ? " +
+					"Password = ? " +
 					"WHERE ID = ?");
 			
 			deleteEmployee = connection.prepareStatement(
@@ -54,6 +55,7 @@ public class EmployeeRepository {
 			insertEmployee.setString(3, employee.getRole().name());
 			insertEmployee.setString(4, employee.getEmail());
 			insertEmployee.setString(5, employee.getPassword());
+			
 			return insertEmployee.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -70,6 +72,7 @@ public class EmployeeRepository {
 			updateEmployee.setString(4, employee.getEmail());
 			updateEmployee.setString(5, employee.getPassword());
 			updateEmployee.setInt(6, employee.getId());
+			
 			return updateEmployee.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

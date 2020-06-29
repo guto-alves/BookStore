@@ -1,7 +1,7 @@
 package model;
 
 public enum Role {
-	EMPLOYEE("Atendente"), LIBRARIAN("Bibliotecário");
+	CLERK("Clerk"), ADMIN("Admin");
 
 	private final String name;
 
@@ -11,7 +11,7 @@ public enum Role {
 	
 	public String getName() {
 		return name;
-	}
+	} 
 
 	@Override
 	public String toString() {

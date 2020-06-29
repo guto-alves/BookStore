@@ -6,21 +6,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 
-public class AnotationsView {
-	private BorderPane root;
-
+public class AnotationsView extends BorderPane {
+	
 	public AnotationsView() {
-		Button saveButton = new Button("Salvar");
+		Button saveButton = new Button("Save"); 
 		BorderPane.setAlignment(saveButton, Pos.CENTER);
 		TextArea textArea = new TextArea();
 
-		root = new BorderPane();
-		root.setPadding(new Insets(8));
-		root.setTop(saveButton);
-		root.setCenter(textArea);
-	}
-
-	public BorderPane getRoot() {
-		return root;
+		setPadding(new Insets(8));
+		setTop(saveButton);
+		setCenter(textArea);
 	}
 }

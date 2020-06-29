@@ -1,6 +1,6 @@
 package view;
 
-import controller.AuthorController;
+import controller.CategoryController;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.geometry.HPos;
@@ -11,7 +11,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn; 
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -20,22 +20,21 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import model.Author;
+import model.Category;
 
-public class AuthorView extends BorderPane {
+public class CategoryView extends BorderPane {
 	private TextField filterTextField;
-	private TableView<Author> tableView;
+	private TableView<Category> tableView;
 	
-	private TextField firstNameTextField;
-	private TextField lastNameTextField;
+	private TextField nameTextField;
 	
-	private Button saveButton;
+	private Button saveButton; 
 	private Button cancelButton;
 
-	private AuthorController controller;
+	private CategoryController controller;
 
-	public AuthorView() {
-		controller = new AuthorController();
+	public CategoryView() {
+		controller = new CategoryController();
 		createLayout();
 		initialize();
 	}
@@ -43,24 +42,23 @@ public class AuthorView extends BorderPane {
 	private void createLayout() {
 		filterTextField = new TextField();
 		filterTextField.setPrefWidth(220);
-		filterTextField.setPromptText("Enter the name of the Author");
 
 		tableView = new TableView<>();
-		TableColumn<Author, String> firstNameColumn = new TableColumn<>("First Name");
-		firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+		TableColumn<Category, ?> idColumn = new TableColumn<>("ID");
+		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-		TableColumn<Author, String> lastNameColumn = new TableColumn<>("Last Name");
-		lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+		TableColumn<Category, ?> nameColumn = new TableColumn<>("Name");
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
 		tableView.widthProperty().addListener((observable, oldValue, newValue) -> {
-			firstNameColumn.setPrefWidth(newValue.doubleValue() / 2);
-			lastNameColumn.setPrefWidth(newValue.doubleValue() / 2);
+			idColumn.setPrefWidth(newValue.doubleValue() / 2);
+			nameColumn.setPrefWidth(newValue.doubleValue() / 2);
 		});
 
-		tableView.getColumns().addAll(firstNameColumn, lastNameColumn);
+		tableView.getColumns().addAll(idColumn, nameColumn);
 
 		FlowPane flowPane = new FlowPane(8, 8, 
-				new Label("Filter"), filterTextField); 
+				new Label("Filter by"), filterTextField); 
 		flowPane.setPadding(new Insets(16));
 
 		BorderPane borderPane = new BorderPane();
@@ -68,8 +66,7 @@ public class AuthorView extends BorderPane {
 		borderPane.setTop(flowPane);
 		borderPane.setCenter(tableView);
 
-		firstNameTextField = new TextField();
-		lastNameTextField = new TextField();
+		nameTextField = new TextField();
 		saveButton = new Button("Register");
 		cancelButton = new Button("Cancel"); 
 
@@ -77,51 +74,46 @@ public class AuthorView extends BorderPane {
 		GridPane gridPane = new GridPane();
 		gridPane.setAlignment(Pos.CENTER);
 		gridPane.setHgap(10); 
-		gridPane.setVgap(10);
-		gridPane.addRow(0, new Label("First Name"), firstNameTextField);
-		gridPane.addRow(1, new Label("Last Name"), lastNameTextField);
-		gridPane.add(new HBox(16, cancelButton, saveButton), 1, 2);
+		gridPane.setVgap(10); 
+		gridPane.addRow(0, new Label("Name"), nameTextField);
+		gridPane.add(new HBox(16, cancelButton, saveButton), 1, 1);
 
 		setCenter(new SplitPane(borderPane, gridPane));
 	}
 
 	private void initialize() {
-		firstNameTextField.textProperty().bindBidirectional(
+		nameTextField.textProperty().bindBidirectional(
 				controller.getFirstName());
-		lastNameTextField.textProperty().bindBidirectional(
-				controller.getLastName());
 		
 		tableView.getSelectionModel().selectedItemProperty()
 			.addListener((observable, oldValue, newValue) -> {
-				controller.setAuthorSelected(newValue);
+				controller.setCategorySelected(newValue);
 			});
 
 		MenuItem deleteMenuItem = new MenuItem("Delete");
 		deleteMenuItem.setAccelerator(KeyCombination.keyCombination("Delete"));
-		deleteMenuItem.setOnAction(event -> controller.deleteAuthor());
+		deleteMenuItem.setOnAction(event -> controller.deleteCategory());
 		tableView.setContextMenu(new ContextMenu(deleteMenuItem));
-		tableView.setItems(controller.getAuthorsList());
+		tableView.setItems(controller.getCategorysList());
 
-		FilteredList<Author> filteredList = new FilteredList<>(tableView.getItems());
+		FilteredList<Category> filteredList = new FilteredList<>(tableView.getItems());
 		filterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
 			
-			filteredList.setPredicate(author -> {
+			filteredList.setPredicate(category -> {
 				if (newValue == null || newValue.isBlank()) {
 					return true;
 				}
 
 				String text = newValue.toLowerCase();
 
-				if (author.getFirstName().toLowerCase().contains(text)
-						|| author.getLastName().toLowerCase().contains(text)) {
+				if (category.getName().toLowerCase().contains(text)) {
 					return true;
 				}
 
 				return false;
 			});
-			
 		});
-		SortedList<Author> sortedList = new SortedList<>(filteredList);
+		SortedList<Category> sortedList = new SortedList<>(filteredList);
 		sortedList.comparatorProperty().bind(tableView.comparatorProperty());
 		tableView.setItems(sortedList);
 
@@ -135,11 +127,11 @@ public class AuthorView extends BorderPane {
 				});
 		cancelButton.setOnAction(event -> {
 			tableView.getSelectionModel().clearSelection();
-		});
+		}); 
 
 		saveButton.setOnAction(event -> {
 			if (saveButton.getText().contains("Register")) {
-				controller.addAuthor();
+				controller.addCategory();
 			} else {
 				controller.updateAutor();
 			}

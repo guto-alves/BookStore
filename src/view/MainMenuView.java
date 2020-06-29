@@ -20,7 +20,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
-public class MainMenuView {
+public class MainMenuView { 
 	private BorderPane root;
 
 	private TabPane tabPane;
@@ -33,48 +33,38 @@ public class MainMenuView {
 		tabPane = new TabPane();
 		tabPane.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
 
-		MenuItem newTextFile = new MenuItem("Novo Arquivo");
+		MenuItem newTextFile = new MenuItem("New File");
 		newTextFile.setOnAction(event -> {
-			Tab anotationsTab = new Tab("Anotações");
-			anotationsTab.setContent(new AnotationsView().getRoot());
+			Tab anotationsTab = new Tab("Anotations");
+			anotationsTab.setContent(new AnotationsView()); 
 			addTab(anotationsTab);
 		});
 
-		MenuItem openTextFile = new MenuItem("Abrir Arquivo");
-		MenuItem exitMenuItem = new MenuItem("Sair");
+		MenuItem openTextFile = new MenuItem("Open File");
+		MenuItem exitMenuItem = new MenuItem("Exit");
 		exitMenuItem.setOnAction(event -> {
 			System.exit(0);
 		});
-		Menu fileMenu = new Menu("Arquivo");
+		Menu fileMenu = new Menu("File");
 		fileMenu.getItems().addAll(newTextFile, openTextFile, 
 				new SeparatorMenuItem(), exitMenuItem);
 
-		Menu settingsMenu = new Menu("Configurações");
-		Menu helpMenu = new Menu("Ajuda");
+		Menu settingsMenu = new Menu("Settings");
+		Menu helpMenu = new Menu("Help");
 		MenuBar menuBar = new MenuBar(fileMenu, settingsMenu, helpMenu);
 		
-		Tab loansTab = new Tab("Empréstimo");
-		loansTab.setContent(new LoanView().getRoot());
-
-		Tab customersTab = new Tab("Clientes");
-		customersTab.setContent(new CustomerView().getRoot());
-
-		Tab booksTab = new Tab("Livros");
-		booksTab.setContent(new BookView().getRoot());
-
-		Tab authorsTab = new Tab("Autores");
-		authorsTab.setContent(new AuthorView().getRoot());
-
-		Tab publishersTab = new Tab("Editoras");
-		publishersTab.setContent(new PublisherView().getRoot());
-
-		Tab employeesTab = new Tab("Funcionários");
-		employeesTab.setContent(new EmployeeView().getRoot());
+		Tab salesTab = new Tab("Sales", new SaleView());
+		Tab customersTab = new Tab("Customers", new CustomerView());
+		Tab booksTab = new Tab("Books", new BookView());
+		Tab categoriesTab = new Tab("Categories", new CategoryView());
+		Tab authorsTab = new Tab("Authors", new AuthorView());
+		Tab publishersTab = new Tab("Publishers", new PublisherView());
+		Tab employeesTab = new Tab("Employees", new EmployeeView());
 
 		listView = new ListView<>();
 		listView.setMaxHeight(ListView.USE_COMPUTED_SIZE);
-		listView.getItems().addAll(loansTab, customersTab, booksTab,
-				authorsTab, publishersTab, employeesTab);
+		listView.getItems().addAll(salesTab, customersTab, booksTab,
+				categoriesTab, authorsTab, publishersTab, employeesTab);
 		
 		listView.setCellFactory(new Callback<ListView<Tab>, ListCell<Tab>>() {
 			
@@ -84,7 +74,7 @@ public class MainMenuView {
 					@Override
 					protected void updateItem(Tab item, boolean empty) {
 						super.updateItem(item, empty);
-						
+				
 						if (empty || item == null) {
 							setGraphic(null);
 						} else {
@@ -97,11 +87,11 @@ public class MainMenuView {
 						}
 					}
 				};
-			}
+			} 
 		});
 	
 		Text text = new Text("Menu");
-		text.setFill(Color.BLUE);
+		text.setFill(Color.BLUE); 
 		text.setFont(Font.font("Tamoha", FontWeight.BOLD, 16));
 		
 		VBox vBox = new VBox(text, listView);
@@ -113,12 +103,14 @@ public class MainMenuView {
 		root.setTop(menuBar);
 		root.setCenter(splitPane);
 		
-		addTab(loansTab);
+		addTab(salesTab);
+		addTab(booksTab);
 	}
 
 	private void addTab(Tab tab) {
 		if (!tabPane.getTabs().contains(tab)) {
 			tabPane.getTabs().add(tab);
+			tabPane.getSelectionModel().select(tab);
 		}
 		
 		tabPane.getSelectionModel().select(tab);
