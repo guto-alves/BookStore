@@ -15,7 +15,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -69,6 +68,7 @@ public class AuthorView extends BorderPane {
 		borderPane.setCenter(tableView);
 
 		firstNameTextField = new TextField();
+		firstNameTextField.setPrefWidth(220);
 		lastNameTextField = new TextField();
 		saveButton = new Button("Register");
 		cancelButton = new Button("Cancel"); 
@@ -97,12 +97,11 @@ public class AuthorView extends BorderPane {
 			});
 
 		MenuItem deleteMenuItem = new MenuItem("Delete");
-		deleteMenuItem.setAccelerator(KeyCombination.keyCombination("Delete"));
 		deleteMenuItem.setOnAction(event -> controller.deleteAuthor());
 		tableView.setContextMenu(new ContextMenu(deleteMenuItem));
-		tableView.setItems(controller.getAuthorsList());
-
-		FilteredList<Author> filteredList = new FilteredList<>(tableView.getItems());
+	
+		FilteredList<Author> filteredList = 
+				new FilteredList<>(controller.getAuthorsList());
 		filterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
 			
 			filteredList.setPredicate(author -> {
@@ -125,24 +124,17 @@ public class AuthorView extends BorderPane {
 		sortedList.comparatorProperty().bind(tableView.comparatorProperty());
 		tableView.setItems(sortedList);
 
-		controller.getInsertionMode().addListener(
-				(observable, oldValue, newValue) -> {
-					if (newValue.booleanValue()) {
-						saveButton.setText("Register");
-					} else {
-						saveButton.setText("Update");
-					}
-				});
+		controller.getInsertionMode()
+			.addListener((observable, oldValue, insertionMode) -> {
+				saveButton.setText(insertionMode ? "Register" : "Update");
+			});
+		
 		cancelButton.setOnAction(event -> {
 			tableView.getSelectionModel().clearSelection();
 		});
 
 		saveButton.setOnAction(event -> {
-			if (saveButton.getText().contains("Register")) {
-				controller.addAuthor();
-			} else {
-				controller.updateAutor();
-			}
+			controller.onActionButtonPressed();
 		});
 	}
 }

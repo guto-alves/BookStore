@@ -67,6 +67,7 @@ public class CategoryView extends BorderPane {
 		borderPane.setCenter(tableView);
 
 		nameTextField = new TextField();
+		nameTextField.setPrefWidth(220);
 		saveButton = new Button("Register");
 		cancelButton = new Button("Cancel"); 
 
@@ -94,9 +95,9 @@ public class CategoryView extends BorderPane {
 		deleteMenuItem.setAccelerator(KeyCombination.keyCombination("Delete"));
 		deleteMenuItem.setOnAction(event -> controller.deleteCategory());
 		tableView.setContextMenu(new ContextMenu(deleteMenuItem));
-		tableView.setItems(controller.getCategorysList());
 
-		FilteredList<Category> filteredList = new FilteredList<>(tableView.getItems());
+		FilteredList<Category> filteredList = 
+				new FilteredList<>(controller.getCategorysList());
 		filterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
 			
 			filteredList.setPredicate(category -> {
@@ -104,10 +105,11 @@ public class CategoryView extends BorderPane {
 					return true;
 				}
 
-				String text = newValue.toLowerCase();
+				String filter = newValue.toLowerCase();
 
-				if (category.getName().toLowerCase().contains(text)) {
-					return true;
+				if (String.valueOf(category.getId()).contains(filter)
+						|| category.getName().toLowerCase().contains(filter)) {
+					return true; 
 				}
 
 				return false;
@@ -118,12 +120,8 @@ public class CategoryView extends BorderPane {
 		tableView.setItems(sortedList);
 
 		controller.getInsertionMode().addListener(
-				(observable, oldValue, newValue) -> {
-					if (newValue.booleanValue()) {
-						saveButton.setText("Register");
-					} else {
-						saveButton.setText("Update");
-					}
+				(observable, oldValue, insertionMode) -> {
+					saveButton.setText(insertionMode ? "Register" : "Update");
 				});
 		cancelButton.setOnAction(event -> {
 			tableView.getSelectionModel().clearSelection();

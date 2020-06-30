@@ -148,19 +148,14 @@ public class BookView extends BorderPane {
 				copiesColumn);
 
 		tableView.widthProperty().addListener((o, oldValue, newValue) -> {
-			int totalColumn = tableView.getColumns().size();
 			double width = newValue.doubleValue();
-
-			for (TableColumn<Book, ?> column : tableView.getColumns()) {
-				column.setPrefWidth(width / totalColumn);
-			}
 			
 			isbnColumn.setPrefWidth(width * 0.22);
 			titleColumn.setPrefWidth(width * 0.34);
 			editionNumberColumn.setPrefWidth(width * 0.10);
-			yearColumn.setPrefWidth(width * 0.14);
-			priceColumn.setPrefWidth(width * 0.10);
-			copiesColumn.setPrefWidth(width * 0.10);
+			yearColumn.setPrefWidth(width * 0.11);
+			priceColumn.setPrefWidth(width * 0.11);
+			copiesColumn.setPrefWidth(width * 0.12);
 		});
 
 		tableView.getSelectionModel().selectedItemProperty()
@@ -172,7 +167,8 @@ public class BookView extends BorderPane {
 		excluirMenuItem.setOnAction(event -> controller.deleteBook());
 		tableView.setContextMenu(new ContextMenu(excluirMenuItem));
 
-		FilteredList<Book> filteredData = new FilteredList<>(controller.getBooksList());
+		FilteredList<Book> filteredData = 
+				new FilteredList<>(controller.getBooksList());
 		filterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
 			filteredData.setPredicate(book -> {
 				if (newValue == null || newValue.isBlank()) { 
@@ -235,7 +231,8 @@ public class BookView extends BorderPane {
 		categoriesComboBox.valueProperty().bindBidirectional(
 				controller.getCategorySelected());
 
-		cancelButton.setOnAction(event -> tableView.getSelectionModel().clearSelection());
+		cancelButton.setOnAction(event -> 
+			tableView.getSelectionModel().clearSelection());
 
 		saveButton.setOnAction(event -> {
 			if (saveButton.getText().contains("Register")) {

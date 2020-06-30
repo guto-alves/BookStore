@@ -44,12 +44,14 @@ public class AuthorController {
 		}
 	}
 
-	private boolean hasInvalidFields() {
-		firstName.set(firstName.get().strip());
-		lastName.set(lastName.get().strip());
-		return firstName.get().isBlank() || lastName.get().isBlank();
+	public void onActionButtonPressed() {
+		if (insertionMode.get()) {
+			addAuthor();
+		} else {
+			updateAutor();
+		}
 	}
-
+	
 	public void addAuthor() {
 		if (hasInvalidFields()) {
 			return;
@@ -111,6 +113,12 @@ public class AuthorController {
 	private void getAllAuthors() {
 		authorsList.setAll(authorRepository.getAllAuthors());
 	}
+	
+	private boolean hasInvalidFields() {
+		firstName.set(firstName.get().strip());
+		lastName.set(lastName.get().strip());
+		return firstName.get().isBlank() || lastName.get().isBlank();
+	}
 
 	private void displayAlert(AlertType alertType, String title, String message) {
 		Alert alert = new Alert(alertType);
@@ -139,5 +147,4 @@ public class AuthorController {
 	public BooleanProperty getInsertionMode() {
 		return insertionMode;
 	}
-
 }
