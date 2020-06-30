@@ -14,16 +14,16 @@ R4. O sistema de manter informações cadastrais sobre os livros.
 	REQUISITOS NÃO FUNCIONAIS
 	REGRAS DO NEGÓCIO
 
-RN01. Um cliente não pode realizar uma compra caso o livro não tenha estoque.
+RN03. Um cliente não pode realizar uma compra caso o livro não tenha estoque.
 
-RN02. Na compra de 3 livros ou mais, haverá um desconto de 10%.
+RN04. Na compra de 3 livros ou mais, haverá um desconto de 10%.
 
-RN03. Na compra de 6 livros ou mais, haverá um desconto de 15%.
+RN05. Na compra de 6 livros ou mais, haverá um desconto de 15%.
 
-RN04. Na compra de 10 livros ou mais, haverá um desconto de 25%
+RN06. Na compra de 10 livros ou mais, haverá um desconto de 25%
 
 
 	Portabilidade
-RN03. O sistema dever ser implementado com a linguagem de programação Java.
+RN01. O sistema dever ser implementado com a linguagem de programação Java.
 
-RN04. O sistema dever ser capaz de armazenar os dados em base de dados SQL Server ou SQLite.
+RN02. O sistema dever ser capaz de armazenar os dados em base de dados SQL Server ou SQLite.
