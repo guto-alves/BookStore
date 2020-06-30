@@ -11,6 +11,13 @@ R3. O sistema deve manter informações do(s) funcionários que registram as ven
 R4. O sistema de manter informações cadastrais sobre os livros.
 
 
+	PORTABILIDADE
+	
+RN01. O sistema dever ser implementado com a linguagem de programação Java.
+
+RN02. O sistema dever ser capaz de armazenar os dados em base de dados SQL Server ou SQLite.
+
+
 	REQUISITOS NÃO FUNCIONAIS
 	REGRAS DO NEGÓCIO
 
@@ -23,7 +30,4 @@ RN05. Na compra de 6 livros ou mais, haverá um desconto de 15%.
 RN06. Na compra de 10 livros ou mais, haverá um desconto de 25%
 
 
-	Portabilidade
-RN01. O sistema dever ser implementado com a linguagem de programação Java.
 
-RN02. O sistema dever ser capaz de armazenar os dados em base de dados SQL Server ou SQLite.
