@@ -45,7 +45,8 @@ public class PublisherView extends BorderPane {
 	private void createLayout() {
 		filterTextField = new TextField();
 		filterTextField.setPrefWidth(220);
-		FlowPane filterFlowPane = new FlowPane(8, 8, new Label("Filter"), filterTextField);
+		FlowPane filterFlowPane = new FlowPane(8, 8, 
+				new Label("Filter"), filterTextField);
 		filterFlowPane.setPadding(new Insets(16));
 
 		tableView = new TableView<>();
@@ -79,6 +80,13 @@ public class PublisherView extends BorderPane {
 	}
 
 	private void initialize() {
+		nameTextField.textProperty().bindBidirectional(controller.getName());
+		phoneTextField.textProperty().bindBidirectional(controller.getPhone());
+		streetTextField.textProperty().bindBidirectional(controller.getStreet());
+		numberTextField.textProperty().bindBidirectional(controller.getNumber());
+		complementTextField.textProperty().bindBidirectional(
+				controller.getComplement());
+		
 		TableColumn<Publisher, String> nameColumn = new TableColumn<>("Name");
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
@@ -90,7 +98,10 @@ public class PublisherView extends BorderPane {
 			}
 
 			return new SimpleStringProperty(
-					String.format("%s, %s", a.getValue().getStreet(), a.getValue().getNumber()));
+					String.format("%s%s", 
+							a.getValue().getStreet(), 
+							a.getValue().getNumber() != null ?
+							", " + a.getValue().getNumber() : ""));
 		});
 
 		TableColumn<Publisher, String> phoneColumn = new TableColumn<>("Phone");
@@ -105,33 +116,17 @@ public class PublisherView extends BorderPane {
 
 		tableView.getColumns().addAll(nameColumn, addressColumn, phoneColumn);
 
-		controller.getPublisherSelected().addListener((ob, oldValue, newValue) -> {
-			if (newValue == null) {
-				nameTextField.setText("");
-				streetTextField.setText("");
-				numberTextField.setText("");
-				complementTextField.setText("");
-				phoneTextField.setText("");
-				saveButton.setText("Register");
-			} else {
-				nameTextField.setText(newValue.getName());
-				streetTextField.setText(newValue.getStreet());
-				numberTextField.setText(newValue.getNumber());
-				complementTextField.setText(newValue.getComplement());
-				phoneTextField.setText(newValue.getPhone());
-				saveButton.setText("Update");
-			}
-		});
-
-		tableView.getSelectionModel().selectedItemProperty().addListener((ob, oldValue, newValue) -> {
-			controller.onPublisherSelected(newValue);
-		});
+		tableView.getSelectionModel().selectedItemProperty()
+			.addListener((ob, oldValue, newValue) -> 
+				controller.setPublisherSelected(newValue)
+			);
 
 		MenuItem deleteMenuItem = new MenuItem("Delete");
 		deleteMenuItem.setOnAction(event -> controller.deletePublisher());
 		tableView.setContextMenu(new ContextMenu(deleteMenuItem));
 
-		FilteredList<Publisher> filteredList = new FilteredList<>(controller.getPublishersList());
+		FilteredList<Publisher> filteredList = new FilteredList<>(
+				controller.getPublishersList());
 		filterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
 			filteredList.setPredicate(publisher -> {
 				if (newValue == null || newValue.isBlank()) {
@@ -140,13 +135,17 @@ public class PublisherView extends BorderPane {
 
 				String text = newValue.toLowerCase();
 
-				if (publisher.getName().toLowerCase().contains(text)
-						|| publisher.getPhone().toLowerCase().contains(text)
-						|| publisher.getStreet().toLowerCase().contains(text) || publisher.getNumber().contains(text)
-						|| publisher.getComplement().contains(text)) {
-					return true;
+				try {
+					if (publisher.getName().toLowerCase().contains(text)
+							|| publisher.getPhone().toLowerCase().contains(text)
+							|| publisher.getStreet().toLowerCase().contains(text) 
+							|| publisher.getNumber().contains(text)
+							|| publisher.getComplement().contains(text)) {
+						return true;
+					}
+				} catch (NullPointerException ignored) {
 				}
-
+				
 				return false;
 			});
 		});
@@ -157,9 +156,13 @@ public class PublisherView extends BorderPane {
 		cancelButton.setOnAction(event -> tableView.getSelectionModel().clearSelection());
 
 		saveButton.setOnAction(
-				event -> controller.onActionButtonPressed(nameTextField.getText(), phoneTextField.getText(),
-						streetTextField.getText(), numberTextField.getText(), complementTextField.getText()));
+				event -> controller.onActionButtonPressed());
+		
+		controller.getInsertionMode().addListener((observable, old, insertionMode) -> {
+			saveButton.setText(insertionMode ? "Register" : "Update");
+		});
 
-		controller.getWarningInfo().addListener((ob, old, newValue) -> AlertUtil.displayAlert(newValue));
+		controller.getWarningInfo().addListener((ob, old, newValue) -> 
+			AlertUtil.displayAlert(newValue));
 	}
 }
