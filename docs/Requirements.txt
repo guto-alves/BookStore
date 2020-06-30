@@ -1,0 +1,30 @@
+A bookstore needs an application to control their sales.
+
+	FUNCTIONAL REQUIREMENTS
+
+R1. The system must enable the maintenance of registry entries concerning the books offered by the store.
+
+R2. The system must enable the maintenance of registry information concerning customers and sales history.
+
+R3. The system must enable employees to effect and register the sales of books to customers.
+
+R4. The system must register which employees effected which sales.
+
+
+	NON-FUNCTIONAL REQUIREMENTS
+
+	Business Rules
+
+BR01. A customer cannot effect a purchase in case the book is out of stock.
+
+BR02. A purchase containing 3 or more books will have a discount of 10%
+
+BR03. A purchase containing 6 or more books will have a discount of 15%.
+
+BR04. A purchase containing 10 or more books will have a discount of 25%
+
+	Portability
+
+NFR01. The system must be implemented in Java language.
+
+NFR02. The system must be able to store registries in an SQL or SQLite database server.
