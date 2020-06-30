@@ -3,7 +3,10 @@ This repository contains the files  concerning the Semestral Project involving t
 
 Team members:
 
-Caique Vidal Freitas (https://github.com/CaiqueVidal);
+Caique Vidal Freitas (https://github.com/CaiqueVidal); 
+
 Daniel Caldeira da Mota (https://github.com/Danielmtt);
+
 Gustavo Alves Brito de Almeida (https://github.com/guto-alves);
+
 Murillo Meira de Azedino (https://github.com/yamiau).
