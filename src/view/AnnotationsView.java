@@ -6,9 +6,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 
-public class AnotationsView extends BorderPane {
+public class AnnotationsView extends BorderPane {
 	
-	public AnotationsView() {
+	public AnnotationsView() {
 		Button saveButton = new Button("Save"); 
 		BorderPane.setAlignment(saveButton, Pos.CENTER);
 		TextArea textArea = new TextArea();

@@ -65,6 +65,7 @@ public class CustomerView extends BorderPane {
 
 	private void createLayout() {
 		filterTextField = new TextField();
+		filterTextField.setPrefWidth(220);
 		FlowPane filterFlowPane = new FlowPane(8, 8, 
 				new Label("Filter"), filterTextField);
 		filterFlowPane.setPadding(new Insets(16));

@@ -38,7 +38,7 @@ public class EmployeeView extends BorderPane {
 	private Button updateButton;
 	private Button cancelButton;
 
-	private TextField filtedTextField;
+	private TextField filterTextField;
 	private TableView<Employee> tableView;
 
 	private EmployeeController controller;
@@ -51,9 +51,10 @@ public class EmployeeView extends BorderPane {
 
 	private void createLayout() {
 		tableView = new TableView<>();
-		filtedTextField = new TextField();
+		filterTextField = new TextField();
+		filterTextField.setPrefWidth(220);
 		FlowPane filterFlowPane = new FlowPane(8, 8, 
-				new Label("Filter"), filtedTextField);
+				new Label("Filter"), filterTextField);
 		filterFlowPane.setPadding(new Insets(16));
 		BorderPane borderPane = new BorderPane();
 		borderPane.setPadding(new Insets(8));
@@ -154,7 +155,7 @@ public class EmployeeView extends BorderPane {
 
 		FilteredList<Employee> filteredList = new FilteredList<>(controller.getEmployeesList());
 		
-		filtedTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+		filterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
 			filteredList.setPredicate(employee -> {
 				if (newValue == null || newValue.isBlank()) {
 					return true;

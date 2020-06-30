@@ -60,7 +60,8 @@ public class BookView extends BorderPane {
 	public void createLayout() {
 		tableView = new TableView<Book>();
 		filterTextField = new TextField();
-		FlowPane flowPane = new FlowPane(8, 8, new Label("Filter by"), filterTextField);
+		filterTextField.setPrefWidth(220);
+		FlowPane flowPane = new FlowPane(8, 8, new Label("Filter"), filterTextField);
 		flowPane.setPadding(new Insets(16));
 		BorderPane borderPane = new BorderPane();
 		borderPane.setPadding(new Insets(8));

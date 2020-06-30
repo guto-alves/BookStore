@@ -39,6 +39,7 @@ public class CustomerSelectionDialog {
 		dialog.setResizable(true);
 
 		TextField filterTextField = new TextField();
+		filterTextField.setPrefWidth(220);
 
 		tableView = new TableView<>();
 		TableColumn<Customer, String> nameColumn = new TableColumn<>("Name");
@@ -95,7 +96,7 @@ public class CustomerSelectionDialog {
 				tableView.getSelectionModel().selectedItemProperty().isNull());
 
 		FlowPane flowPane = new FlowPane(8, 8, 
-				new Label("Filter by"), filterTextField);
+				new Label("Filter"), filterTextField);
 		flowPane.setPadding(new Insets(16));
 		BorderPane borderPane = new BorderPane();
 		borderPane.setPadding(new Insets(8));

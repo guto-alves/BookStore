@@ -58,7 +58,7 @@ public class CategoryView extends BorderPane {
 		tableView.getColumns().addAll(idColumn, nameColumn);
 
 		FlowPane flowPane = new FlowPane(8, 8, 
-				new Label("Filter by"), filterTextField); 
+				new Label("Filter"), filterTextField); 
 		flowPane.setPadding(new Insets(16));
 
 		BorderPane borderPane = new BorderPane();

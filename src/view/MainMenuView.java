@@ -35,9 +35,9 @@ public class MainMenuView {
 
 		MenuItem newTextFile = new MenuItem("New File");
 		newTextFile.setOnAction(event -> {
-			Tab anotationsTab = new Tab("Anotations");
-			anotationsTab.setContent(new AnotationsView()); 
-			addTab(anotationsTab);
+			Tab annotationsTab = new Tab("Annotations");
+			annotationsTab.setContent(new AnnotationsView()); 
+			addTab(annotationsTab);
 		});
 
 		MenuItem openTextFile = new MenuItem("Open File");

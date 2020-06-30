@@ -107,7 +107,7 @@ public class BooksSelectionDialog {
 		node.disableProperty().bind(
 				tableView.getSelectionModel().selectedItemProperty().isNull());
 
-		FlowPane flowPane = new FlowPane(8, 8, new Label("Filter by"), filterTextField);
+		FlowPane flowPane = new FlowPane(8, 8, new Label("Filter"), filterTextField);
 		flowPane.setPadding(new Insets(16));
 		BorderPane borderPane = new BorderPane();
 		borderPane.setPadding(new Insets(8));
