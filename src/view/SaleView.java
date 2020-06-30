@@ -269,6 +269,17 @@ public class SaleView extends BorderPane {
 							.stream()
 							.mapToDouble(pair -> pair.getKey().getPrice() * pair.getValue())
 							.sum()));
+				double discount = 1;
+				if (books.size() >= 3) {
+					discount = 0.1;
+				} else if (books.size() >= 6) {
+					discount = 0.15;
+				} else if (books.size() >= 10) {
+					discount = 0.25;
+				}
+				double total = Double.parseDouble(totalTextField.getText());
+				total = total - (total * discount);
+				totalTextField.setText(String.valueOf(total));
 			});
 		});
 		
