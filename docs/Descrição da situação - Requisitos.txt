@@ -8,7 +8,7 @@ R2. O sistema deve permitir que o funcionário registre a venda de livros para c
 
 R3. O sistema deve manter informações do(s) funcionários que registram as vendas.
 
-R4. O sistema de manter informações cadatrais sobre os livros.
+R4. O sistema de manter informações cadastrais sobre os livros.
 
 
 	REQUISITOS NÃO FUNCIONAIS
