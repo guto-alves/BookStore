@@ -22,5 +22,15 @@ public class Database {
 
 		return connection;
 	}
-	
+
+	public static void close() {
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 }

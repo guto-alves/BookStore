@@ -113,9 +113,10 @@ BEGIN
 	WHERE ISBN = @BookISBN
 END;
 
+GO
 
 INSERT INTO Employee
-	VALUES('Admin', '12345678', 'ADMIN', 'admin', 'admin123')
+	VALUES('Admin', '12345678', 'ADMIN', 'admin', 'admin123');
 
 
 -- QUERIES
@@ -124,6 +125,7 @@ SELECT * FROM Sale;
 SELECT * FROM Sale_Book;
 SELECT * FROM Author;
 SELECT * FROM Customer;
+SELECT * FROM Employee;
 
 -- seleciona os dados de todas as vendas (exceto os livros)
 SELECT  
