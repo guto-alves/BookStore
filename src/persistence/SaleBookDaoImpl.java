@@ -12,7 +12,7 @@ import model.Book;
 import model.Category;
 import model.Publisher;
 
-public class SaleBookDaoImpl {
+public class SaleBookDaoImpl implements SaleBookDao {
 	private PreparedStatement insertNewSaleBook;
 	private PreparedStatement selectAllSaleBook;
 	private PreparedStatement deleteSaleBook;

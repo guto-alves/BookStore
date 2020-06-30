@@ -10,7 +10,7 @@ import java.util.List;
 
 import model.Category;
 
-public class CategoryDaoImpl {
+public class CategoryDaoImpl implements CategoryDao {
 	private PreparedStatement insertCategory;
 	private PreparedStatement selectAllCategories;
 	private PreparedStatement updateCategory;
@@ -57,6 +57,7 @@ public class CategoryDaoImpl {
 		try {
 			updateCategory.setString(1, category.getName());
 			updateCategory.setInt(2, category.getId());
+			
 			return updateCategory.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

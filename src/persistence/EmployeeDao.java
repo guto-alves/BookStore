@@ -6,12 +6,14 @@ import model.Employee;
 
 public interface EmployeeDao {
 	
-	public abstract void add(Employee employee);
+	public abstract int addEmployee(Employee employee);
 	
-	public abstract void update(Employee employee);
+	public abstract int updateEmployee(Employee employee);
 	
-	public abstract void remove(Employee employee);
+	public abstract int deleteEmployee(int id);
 	
-	public abstract List<Employee> selectAll();
+	public abstract List<Employee> getAllEmployees();
+	
+	public abstract Employee findEmployee(String email, String password);
 
 }

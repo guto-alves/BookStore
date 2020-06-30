@@ -12,18 +12,14 @@ import model.Customer;
 import model.Employee;
 import model.Sale;
 
-public class SaleDaoImpl {
+public class SaleDaoImpl implements SaleDao {
 	private PreparedStatement insertNewSale;
 	private PreparedStatement updateSale;
 	private PreparedStatement deleteSale;
 	private PreparedStatement selectAllSales;
 
-	private SaleBookDaoImpl bookDaoImpl;
-
 	public SaleDaoImpl() {
-		try {
-			bookDaoImpl = new SaleBookDaoImpl();
-			
+		try {			
 			Connection connection = Database.getConnection();
 			
 			insertNewSale = connection.prepareStatement(

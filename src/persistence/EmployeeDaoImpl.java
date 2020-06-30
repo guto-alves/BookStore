@@ -10,7 +10,7 @@ import java.util.List;
 import model.Employee;
 import model.Role;
 
-public class EmployeeDaoImpl { 
+public class EmployeeDaoImpl implements EmployeeDao { 
 	private PreparedStatement insertEmployee;
 	private PreparedStatement updateEmployee;
 	private PreparedStatement deleteEmployee;
@@ -81,7 +81,7 @@ public class EmployeeDaoImpl {
 		return 0;
 	}
 	
-	public int deleteEmployee(int id) {
+	public int deleteEmployee(int id) { 
 		try {
 			deleteEmployee.setInt(1, id);
 			return deleteEmployee.executeUpdate();
@@ -91,7 +91,7 @@ public class EmployeeDaoImpl {
 		
 		return 0;
 	}
-	
+	 
 	public List<Employee> getAllEmployees() {
 		try(ResultSet resultSet = selectAllEmployees.executeQuery()) {
 			List<Employee> employees = new ArrayList<>();
@@ -114,7 +114,7 @@ public class EmployeeDaoImpl {
 		return null;
 	}
 	
-	public Employee getEmployee(String email, String password) {
+	public Employee findEmployee(String email, String password) {
 		try {
 			selectEmployeeByEmailAndPassword.setString(1, email);
 			selectEmployeeByEmailAndPassword.setString(2, password);

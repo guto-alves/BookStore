@@ -19,7 +19,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import model.Customer;
-import persistence.CustomerDaoImpl;
+import persistence.CustomerDao;
+import persistence.DAOFactory;
 
 public class CustomerSelectionDialog {
 
@@ -31,7 +32,7 @@ public class CustomerSelectionDialog {
 
 	private TableView<Customer> tableView = new TableView<>();
 	
-	private CustomerDaoImpl customerRepository = new CustomerDaoImpl();
+	private CustomerDao customerDao = DAOFactory.getCustomerDao();
 
 	public CustomerSelectionDialog() {
 		dialog = new Dialog<>();
@@ -61,7 +62,7 @@ public class CustomerSelectionDialog {
 		}); 
 
 		ObservableList<Customer> customersList = FXCollections.observableArrayList();
-		customersList.setAll(customerRepository.getAllCustomers());
+		customersList.setAll(customerDao.getAllCustomers());
 		FilteredList<Customer> filteredList = new FilteredList<>(customersList);
 		filterTextField.textProperty()
 			.addListener((observable, oldValue, newValue) -> {

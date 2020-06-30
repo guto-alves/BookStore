@@ -6,12 +6,13 @@ import model.Publisher;
 
 public interface PublisherDao {
 
-	public abstract void add(Publisher publisher);
+	public abstract int addPublisher(Publisher publisher);
 
-	public abstract void update(Publisher publisher);
+	public abstract int updatePublisher(Publisher publisher, 
+			String currentName);
 
-	public abstract void remove(Publisher publisher);
+	public abstract int deletePublisher(Publisher publisher);
 
-	public abstract List<Publisher> selectAll();
+	public abstract List<Publisher> getAllPublishers();
 
 }

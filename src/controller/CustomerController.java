@@ -9,37 +9,28 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import model.Customer;
-import persistence.CustomerDaoImpl;
-import persistence.PhoneDaoImpl;
+import persistence.CustomerDao;
+import persistence.DAOFactory;
+import persistence.PhoneDao;
 
 public class CustomerController {
 	private Customer customerSelected;
 	
 	private ObservableList<Customer> customersList;
 	
-	private final CustomerDaoImpl customerDao;
-	private final PhoneDaoImpl phoneDao;
-	
 	private StringProperty warning = new SimpleStringProperty();
+	
+	private final CustomerDao customerDao;
+	private final PhoneDao phoneDao;
 
 	public CustomerController() {
-		customerDao = new CustomerDaoImpl();
-		phoneDao = new PhoneDaoImpl();
+		customerDao = DAOFactory.getCustomerDao();
+		phoneDao = DAOFactory.getPhoneDao();
 		
 		customersList = FXCollections.observableArrayList();
 		
 		getAllCustomers();
 	}
-
-//	private boolean hasInvalidFields(String... fields) {
-//		for (String string : fields) {
-//			if (string.isBlank()) {
-//				return true;
-//			}
-//		}
-//		
-//		return false;
-//	}
 
 	public void addCustomer(String cpf, String name, 
 			String email, List<String> phones, String street, String number,
@@ -48,10 +39,10 @@ public class CustomerController {
 				number, complement, zipCode);
 	
 		int result = customerDao.addCustomer(customer);
-		
-		phoneDao.addPhones(phones, cpf);
 
 		if (result == 1) {
+			phoneDao.addPhones(phones, cpf);
+			
 			getAllCustomers();
 			displayAlert(AlertType.INFORMATION, "Customer Added",
 					"Customer successfully added!");
@@ -90,8 +81,7 @@ public class CustomerController {
 		
 		phoneDao.deletePhones(customerSelected.getCpf());
 		
-		int result = customerDao.deleteCustomer(
-				customerSelected.getCpf());
+		int result = customerDao.deleteCustomer(customerSelected);
 
 		if (result == 1) {
 			customersList.remove(customerSelected);

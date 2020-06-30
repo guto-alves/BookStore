@@ -9,7 +9,7 @@ import java.util.List;
 
 import model.Author;
 
-public class AuthorBookDaoImpl {
+public class AuthorBookDaoImpl implements AuthorBookDao {
 	private PreparedStatement addAuthorBook;
 	private PreparedStatement selectAllAuthors;
 	private PreparedStatement deleteAuthorBook;
@@ -40,7 +40,7 @@ public class AuthorBookDaoImpl {
 		}
 	}
 	
-	public int add(String isbn, List<Author> authors) {
+	public int add(List<Author> authors, String isbn) {
 		try {
 			for (Author author : authors) {
 				addAuthorBook.setInt(1, author.getId());
@@ -61,6 +61,7 @@ public class AuthorBookDaoImpl {
 	public int delete(String isbn) {
 		try {
 			deleteAuthorBook.setString(1, isbn);
+			
 			return deleteAuthorBook.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -71,9 +72,10 @@ public class AuthorBookDaoImpl {
 	
 	public void update(List<Author> authors, String isbn) {
 		delete(isbn);
-		add(isbn, authors);
+		add(authors, isbn);
 	}
-	public List<Author> getAllAuthorsOfTheBook(String isbn) {
+	
+	public List<Author> getAllAuthors(String isbn) {
 		try {
 			selectAllAuthors.setString(1, isbn);
 			ResultSet resultSet = selectAllAuthors.executeQuery();

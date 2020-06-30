@@ -4,12 +4,12 @@ import java.util.List;
 
 public interface PhoneDao {
 
-	public abstract void add(String phone);
+	public abstract int addPhones(List<String> phones, String cpf);
 
-	public abstract void update(String phone);
+	public abstract int deletePhones(String cpf);
+	
+	public abstract void updatePhones(List<String> phones, String cpf);
 
-	public abstract void remove(String phone);
-
-	public abstract List<String> selectAll();
+	public abstract List<String> getAllPhones(String cpf);
 
 }

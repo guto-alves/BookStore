@@ -10,7 +10,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert.AlertType;
 import model.Publisher;
-import persistence.PublisherDaoImpl;
+import persistence.DAOFactory;
+import persistence.PublisherDao;
 
 public class PublisherController {
 	private StringProperty name = new SimpleStringProperty();
@@ -26,10 +27,10 @@ public class PublisherController {
 
 	private BooleanProperty insertionMode = new SimpleBooleanProperty(true);
 	
-	private final PublisherDaoImpl publisherRepository;
+	private final PublisherDao publisherRepository;
 
 	public PublisherController() {
-		publisherRepository = new PublisherDaoImpl();
+		publisherRepository = DAOFactory.getPublisherDao();
 
 		publishersList = FXCollections.observableArrayList();
 		publisherSelected = new SimpleObjectProperty<>();
@@ -111,7 +112,7 @@ public class PublisherController {
 		}
 
 		int result = publisherRepository.deletePublisher(
-				publisherSelected.get().getName());
+				publisherSelected.get());
 
 		if (result == 1) {
 			warningInfo.set(

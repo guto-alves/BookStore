@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhoneDaoImpl {
+public class PhoneDaoImpl implements PhoneDao {
 	private PreparedStatement insertPhone;
 	private PreparedStatement deletePhone;
 	private PreparedStatement selectAllPhones;
@@ -55,6 +55,7 @@ public class PhoneDaoImpl {
 	public int deletePhones(String cpf) {
 		try {
 			deletePhone.setString(1, cpf);
+			
 			return deletePhone.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

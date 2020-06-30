@@ -2,25 +2,24 @@ package controller;
 
 import model.Employee;
 import model.EmployeeOn;
-import persistence.EmployeeDaoImpl;
+import persistence.DAOFactory;
+import persistence.EmployeeDao;
 
 public class LoginController {
-	private EmployeeDaoImpl employeeRepository;
+	private EmployeeDao employeeRepository;
 	
-
 	public LoginController() {
-		employeeRepository = new EmployeeDaoImpl();
+		employeeRepository = DAOFactory.getEmployeeDao();
 	}
-	
+
 	public boolean login(String email, String password) {
-		Employee employee = employeeRepository.getEmployee(email, password);
-		
+		Employee employee = employeeRepository.findEmployee(email, password);
+
 		if (employee != null) {
 			EmployeeOn.employee = employee;
 			return true;
 		}
-		
+
 		return false;
 	}
-
 }

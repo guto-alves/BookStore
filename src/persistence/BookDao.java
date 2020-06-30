@@ -6,12 +6,12 @@ import model.Book;
 
 public interface BookDao {
 
-	public abstract void add(Book employee);
+	public abstract int addBook(Book book);
 	
-	public abstract void update(Book employee);
+	public abstract int updateBook(Book book, String currentIsbn);
 	
-	public abstract void remove(Book employee);
+	public abstract int deleteBook(String isbn);
 	
-	public abstract List<Book> selectAll();
+	public abstract List<Book> getAllBooks();
 
 }

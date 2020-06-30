@@ -6,12 +6,12 @@ import model.Customer;
 
 public interface CustomerDao {
 
-	public abstract void add(Customer customer);
+	public abstract int addCustomer(Customer customer);
 	
-	public abstract void update(Customer customer);
+	public abstract int updateCustomer(Customer customer, String currentCpf);
 	
-	public abstract void remove(Customer customer);
+	public abstract int deleteCustomer(Customer customer);
 	
-	public abstract List<Customer> selectAll();
+	public abstract List<Customer> getAllCustomers();
 
 }

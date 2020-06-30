@@ -12,11 +12,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import model.Author;
 import model.Publisher;
+import persistence.AuthorBookDao;
 import persistence.AuthorBookDaoImpl;
-import persistence.AuthorDaoImpl;
-import persistence.BookDaoImpl;
-import persistence.CategoryDaoImpl;
-import persistence.PublisherDaoImpl;
+import persistence.AuthorDao;
+import persistence.BookDao;
+import persistence.CategoryDao;
+import persistence.DAOFactory;
+import persistence.PublisherDao;
 import model.Book;
 import model.Category;
 
@@ -40,22 +42,22 @@ public class BookController {
 	private ObjectProperty<Publisher> publisherSelected = new SimpleObjectProperty<>();
 	private ObjectProperty<Category> categorySelected = new SimpleObjectProperty<>();
 
-	private final BookDaoImpl bookDao;
-	private final PublisherDaoImpl publisherDao;
-	private final AuthorDaoImpl authorDao;
-	private final AuthorBookDaoImpl authorBookDaoImpl;
-	private final CategoryDaoImpl categoryDao;
+	private final BookDao bookDao;
+	private final PublisherDao publisherDao;
+	private final AuthorDao authorDao;
+	private final AuthorBookDao authorBookDaoImpl;
+	private final CategoryDao categoryDao;
 
 	private BooleanProperty insertionMode = new SimpleBooleanProperty(true);
 	
 	private ObjectProperty<Object[]> warningInfo = new SimpleObjectProperty<>();
 
 	public BookController() {
-		bookDao = new BookDaoImpl();
-		categoryDao = new CategoryDaoImpl();
-		publisherDao = new PublisherDaoImpl();
-		authorDao = new AuthorDaoImpl();
-		authorBookDaoImpl = new AuthorBookDaoImpl();
+		bookDao = DAOFactory.getBookDao();
+		categoryDao = DAOFactory.getCategoryDao();
+		publisherDao =DAOFactory.getPublisherDao();
+		authorDao = DAOFactory.getAuthorDao();
+		authorBookDaoImpl = DAOFactory.getAuthorBookDao();
 
 		publishers = FXCollections.observableArrayList();
 		authors = FXCollections.observableArrayList();
@@ -99,7 +101,7 @@ public class BookController {
 			publisherSelected.set(bookSelected.getPublisher());
 			categorySelected.set(bookSelected.getCategory());
 			authorsSelected.setAll(
-					authorBookDaoImpl.getAllAuthorsOfTheBook(isbn.get()));
+					authorBookDaoImpl.getAllAuthors(isbn.get()));
 			
 			insertionMode.set(false);
 		}
@@ -114,9 +116,9 @@ public class BookController {
 
 		int result = bookDao.addBook(book);
 
-		authorBookDaoImpl.add(isbn.get(), authorsSelected);
-
 		if (result == 1) {
+			authorBookDaoImpl.add(authorsSelected, isbn.get());
+			
 			books.add(book);
 			setBookSelected(null);
 			

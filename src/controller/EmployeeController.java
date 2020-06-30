@@ -6,7 +6,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import model.Employee;
 import model.Role;
-import persistence.EmployeeDaoImpl;
+import persistence.DAOFactory;
+import persistence.EmployeeDao;
 
 public class EmployeeController {
 	public static final String DEFAULT_PASSWORD = "12345678";
@@ -14,22 +15,13 @@ public class EmployeeController {
 	private ObservableList<Employee> employeesList; 
 	private Employee employeeSelected;
 	
-	private final EmployeeDaoImpl employeeDao;
-	
-	private boolean insertionMode; 
+	private final EmployeeDao employeeDao;
 
 	public EmployeeController() {
-		employeeDao = new EmployeeDaoImpl();
+		employeeDao = DAOFactory.getEmployeeDao();
 		employeesList = FXCollections.observableArrayList();
 		getAllEmployees();
 	}
-	
-//	private boolean hasInvalidFields() {
-//		return nameTextField.getText().isBlank() || 
-//				emailTextField.getText().isBlank() ||
-//				passwordTextField.getText().isBlank() ||
-//				rolesComboBox.getSelectionModel().isEmpty();
-//	}
 	
 	public void onEmployeeSelected(Employee employee) {
 		employeeSelected = employee;
@@ -104,8 +96,8 @@ public class EmployeeController {
 	private void displayAlert(AlertType alertType, String title, String message) {
 		Alert alert = new Alert(alertType);
 		alert.setTitle(title);
+		alert.setHeaderText("Message");
 		alert.setContentText(message);
 		alert.show();
 	}
-	
 }

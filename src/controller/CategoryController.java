@@ -1,9 +1,7 @@
 package controller;
 
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -11,26 +9,27 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import model.Category;
-import persistence.CategoryDaoImpl;
+import persistence.CategoryDao;
+import persistence.DAOFactory;
 
 public class CategoryController {
 	private StringProperty name = new SimpleStringProperty();
 
 	private ObservableList<Category> categorysList;
-	private ObjectProperty<Category> categorySelected = new SimpleObjectProperty<>();
+	private Category categorySelected;
 
 	private BooleanProperty insertionMode = new SimpleBooleanProperty(true);
 
-	private final CategoryDaoImpl categoryDao;
+	private final CategoryDao categoryDao;
 
 	public CategoryController() {
-		categoryDao = new CategoryDaoImpl();
+		categoryDao = DAOFactory.getCategoryDao();
 		categorysList = FXCollections.observableArrayList();
 		getAllCategories();
 	}
 
 	public void setCategorySelected(Category category) {
-		categorySelected.set(category);
+		categorySelected = category;
 		
 		if (category == null) {
 			name.set("");
@@ -73,7 +72,7 @@ public class CategoryController {
 		}
 		
 		Category category = new Category(
-				categorySelected.get().getId(), name.get());
+				categorySelected.getId(), name.get());
 
 		int result = categoryDao.updateCategory(category);
 
@@ -92,10 +91,10 @@ public class CategoryController {
 			return;
 		}
 
-		int result = categoryDao.deleteCategory(categorySelected.get());
+		int result = categoryDao.deleteCategory(categorySelected);
 
 		if (result == 1) {
-			categorysList.remove(categorySelected.get());
+			categorysList.remove(categorySelected);
 			
 			displayAlert(AlertType.INFORMATION, "Category Deleted",
 					"Category successfully deleted.");
@@ -123,10 +122,6 @@ public class CategoryController {
 	
 	public ObservableList<Category> getCategorysList() {
 		return categorysList;
-	}
-
-	public ObjectProperty<Category> getCategorySelected() {
-		return categorySelected;
 	}
 
 	public BooleanProperty getInsertionMode() {

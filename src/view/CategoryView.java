@@ -119,13 +119,14 @@ public class CategoryView extends BorderPane {
 		sortedList.comparatorProperty().bind(tableView.comparatorProperty());
 		tableView.setItems(sortedList);
 
-		controller.getInsertionMode().addListener(
-				(observable, oldValue, insertionMode) -> {
-					saveButton.setText(insertionMode ? "Register" : "Update");
-				});
-		cancelButton.setOnAction(event -> {
-			tableView.getSelectionModel().clearSelection();
-		}); 
+		controller.getInsertionMode()
+			.addListener((observable, oldValue, insertionMode) -> 
+						saveButton.setText(insertionMode ? "Register" : "Update")
+			);
+		
+		cancelButton.setOnAction(event -> 
+			tableView.getSelectionModel().clearSelection()
+		); 
 
 		saveButton.setOnAction(event -> {
 			if (saveButton.getText().contains("Register")) {

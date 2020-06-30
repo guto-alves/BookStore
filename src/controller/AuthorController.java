@@ -11,7 +11,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import model.Author;
-import persistence.AuthorDaoImpl;
+import persistence.AuthorDao;
+import persistence.DAOFactory;
 
 public class AuthorController {
 	private StringProperty firstName = new SimpleStringProperty();
@@ -22,10 +23,10 @@ public class AuthorController {
 
 	private BooleanProperty insertionMode = new SimpleBooleanProperty(true);
 
-	private final AuthorDaoImpl authorRepository;
+	private final AuthorDao authorRepository;
 
 	public AuthorController() {
-		authorRepository = new AuthorDaoImpl();
+		authorRepository = DAOFactory.getAuthorDao();
 		authorsList = FXCollections.observableArrayList();
 		getAllAuthors();
 	}

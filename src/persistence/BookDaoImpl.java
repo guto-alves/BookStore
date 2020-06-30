@@ -11,7 +11,7 @@ import model.Book;
 import model.Category;
 import model.Publisher;
 
-public class BookDaoImpl {
+public class BookDaoImpl implements BookDao {
 	private PreparedStatement insertBook;
 	private PreparedStatement updateBook;
 	private PreparedStatement deleteBook;
@@ -60,6 +60,7 @@ public class BookDaoImpl {
 			insertBook.setInt(7, book.getCopies());
 			insertBook.setString(8, book.getPublisher().getName());
 			insertBook.setInt(9, book.getCategory().getId());
+			
 			return insertBook.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -80,6 +81,7 @@ public class BookDaoImpl {
 			updateBook.setString(8, book.getPublisher().getName());
 			updateBook.setInt(9, book.getCategory().getId());
 			updateBook.setString(10, currentIsbn);
+			
 			return updateBook.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -99,7 +101,7 @@ public class BookDaoImpl {
 		return 0;
 	}
 	
-	public List<Book> getAllBooks() {
+	public List<Book> getAllBooks() { 
 		try(ResultSet resultSet = selectAllBooks.executeQuery()) {
 			List<Book> books = new ArrayList<Book>();
 			

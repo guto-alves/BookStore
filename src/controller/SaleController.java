@@ -15,8 +15,9 @@ import model.Book;
 import model.Customer;
 import model.EmployeeOn;
 import model.Sale;
-import persistence.SaleBookDaoImpl;
-import persistence.SaleDaoImpl;
+import persistence.DAOFactory;
+import persistence.SaleBookDao;
+import persistence.SaleDao;
 
 public class SaleController {
 	private StringProperty date = new SimpleStringProperty();
@@ -30,16 +31,16 @@ public class SaleController {
 
 	private Sale saleSelected;
 	
-	private final SaleDaoImpl saleDao;
-	private SaleBookDaoImpl saleBookDao;
+	private final SaleDao saleDao;
+	private SaleBookDao saleBookDao;
 	
 	private BooleanProperty insertionMode = new SimpleBooleanProperty(true);
 	
 	private ObjectProperty<Object[]> warningInfo = new SimpleObjectProperty<>();
 
 	public SaleController() {
-		saleDao = new SaleDaoImpl();
-		saleBookDao = new SaleBookDaoImpl();
+		saleDao = DAOFactory.getSaleDao();
+		saleBookDao = DAOFactory.getSaleBookDao();
 		getAllSales();
 		employeeName.set(EmployeeOn.employee.getName());
 	}

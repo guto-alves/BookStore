@@ -9,7 +9,7 @@ import java.util.List;
 
 import model.Publisher;
 
-public class PublisherDaoImpl {
+public class PublisherDaoImpl implements PublisherDao {
 	private PreparedStatement insertNewPublisher;
 	private PreparedStatement selectAllPublishers;
 	private PreparedStatement updatePublisher;
@@ -48,6 +48,7 @@ public class PublisherDaoImpl {
 			insertNewPublisher.setString(3, publisher.getStreet());
 			insertNewPublisher.setString(4, publisher.getNumber());
 			insertNewPublisher.setString(5, publisher.getComplement());
+			
 			return insertNewPublisher.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -64,6 +65,7 @@ public class PublisherDaoImpl {
 			updatePublisher.setString(4, publisher.getNumber());
 			updatePublisher.setString(5, publisher.getComplement());
 			updatePublisher.setString(6, currentName);
+			
 			return updatePublisher.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -72,9 +74,10 @@ public class PublisherDaoImpl {
 		return 0;
 	}
 	
-	public int deletePublisher(String name) {
+	public int deletePublisher(Publisher publisher) {
 		try {
-			deletePublisher.setString(1, name);
+			deletePublisher.setString(1, publisher.getName());
+			
 			return deletePublisher.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

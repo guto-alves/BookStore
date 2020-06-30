@@ -9,7 +9,7 @@ import java.util.List;
 
 import model.Author;
 
-public class AuthorDaoImpl {
+public class AuthorDaoImpl implements AuthorDao {
 	private PreparedStatement insertAuthor;
 	private PreparedStatement selectAllAuthors;
 	private PreparedStatement updateAuthor;
@@ -44,6 +44,7 @@ public class AuthorDaoImpl {
 		try {
 			insertAuthor.setString(1, author.getFirstName());
 			insertAuthor.setString(2, author.getLastName());
+			
 			return insertAuthor.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -57,6 +58,7 @@ public class AuthorDaoImpl {
 			updateAuthor.setString(1, author.getFirstName());
 			updateAuthor.setString(2, author.getLastName());
 			updateAuthor.setInt(3, author.getId());
+			
 			return updateAuthor.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -68,6 +70,7 @@ public class AuthorDaoImpl {
 	public int deleteAuthor(Author author) {
 		try {
 			deleteAuthor.setInt(1, author.getId());
+			
 			return deleteAuthor.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

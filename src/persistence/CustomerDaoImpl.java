@@ -9,7 +9,7 @@ import java.util.List;
 
 import model.Customer;
 
-public class CustomerDaoImpl {
+public class CustomerDaoImpl implements CustomerDao {
 	private PreparedStatement insertNewCustomer;
 	private PreparedStatement updateCustomer;
 	private PreparedStatement deleteCustomer;
@@ -80,9 +80,10 @@ public class CustomerDaoImpl {
 		return 0;
 	}
 	
-	public int deleteCustomer(String cpf) {
+	public int deleteCustomer(Customer customer) {
 		try {
-			deleteCustomer.setString(1, cpf);
+			deleteCustomer.setString(1, customer.getCpf());
+			
 			return deleteCustomer.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

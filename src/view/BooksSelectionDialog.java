@@ -21,7 +21,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import model.Book;
-import persistence.BookDaoImpl;
+import persistence.BookDao;
+import persistence.DAOFactory;
 
 public class BooksSelectionDialog {
 
@@ -30,8 +31,9 @@ public class BooksSelectionDialog {
 	}
 
 	private Dialog<ButtonType> dialog; 
-	private BookDaoImpl bookDao = new BookDaoImpl();
 	private TableView<Book> tableView = new TableView<>();
+	
+	private BookDao bookDao = DAOFactory.getBookDao();
 
 	public BooksSelectionDialog() {
 		dialog = new Dialog<>();
