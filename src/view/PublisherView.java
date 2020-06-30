@@ -21,13 +21,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import model.Publisher;
 
-public class PublisherView extends BorderPane { 
+public class PublisherView extends BorderPane {
 	private TextField nameTextField;
 	private TextField phoneTextField;
 	private TextField streetTextField;
 	private TextField numberTextField;
 	private TextField complementTextField;
-	
+
 	private Button saveButton;
 	private Button cancelButton;
 
@@ -45,21 +45,20 @@ public class PublisherView extends BorderPane {
 	private void createLayout() {
 		filterTextField = new TextField();
 		filterTextField.setPrefWidth(220);
-		FlowPane filterFlowPane = new FlowPane(8, 8, 
-				new Label("Filter"), filterTextField);
+		FlowPane filterFlowPane = new FlowPane(8, 8, new Label("Filter"), filterTextField);
 		filterFlowPane.setPadding(new Insets(16));
 
 		tableView = new TableView<>();
 
 		BorderPane borderPane = new BorderPane();
-		borderPane.setPadding(new Insets(8)); 
+		borderPane.setPadding(new Insets(8));
 		borderPane.setTop(filterFlowPane);
 		borderPane.setCenter(tableView);
 
 		nameTextField = new TextField();
 		nameTextField.setPrefWidth(250);
-		phoneTextField = new TextField(); 
-		streetTextField = new TextField(); 
+		phoneTextField = new TextField();
+		streetTextField = new TextField();
 		numberTextField = new TextField();
 		complementTextField = new TextField();
 		saveButton = new Button("Register");
@@ -68,7 +67,7 @@ public class PublisherView extends BorderPane {
 		GridPane gridPane = new GridPane();
 		gridPane.setAlignment(Pos.CENTER);
 		gridPane.setHgap(10);
-		gridPane.setVgap(10); 
+		gridPane.setVgap(10);
 		gridPane.addRow(0, new Label("Name"), nameTextField);
 		gridPane.addRow(1, new Label("Phone"), phoneTextField);
 		gridPane.addRow(2, new Label("Street"), streetTextField);
@@ -85,13 +84,13 @@ public class PublisherView extends BorderPane {
 
 		TableColumn<Publisher, String> addressColumn = new TableColumn<>("Address");
 		addressColumn.setCellValueFactory((a) -> {
-			if (a.getValue().getStreet().isBlank()) {
+			if (a.getValue().getStreet() == null 
+					|| a.getValue().getStreet().isBlank()) {
 				return null;
 			}
-				
-			return new SimpleStringProperty(String.format("%s, %s", 
-					a.getValue().getStreet(),
-					a.getValue().getNumber()));
+
+			return new SimpleStringProperty(
+					String.format("%s, %s", a.getValue().getStreet(), a.getValue().getNumber()));
 		});
 
 		TableColumn<Publisher, String> phoneColumn = new TableColumn<>("Phone");
@@ -104,39 +103,35 @@ public class PublisherView extends BorderPane {
 			phoneColumn.setPrefWidth(width / 3);
 		});
 
-		tableView.getColumns().addAll(nameColumn, addressColumn, 
-				phoneColumn);
-		
-		controller.getPublisherSelected()
-			.addListener((ob, oldValue, newValue) -> {
-				if (newValue == null) {
-					nameTextField.setText("");
-					streetTextField.setText(""); 
-					numberTextField.setText(""); 
-					complementTextField.setText(""); 
-					phoneTextField.setText("");
-					saveButton.setText("Register");
-				} else {
-					nameTextField.setText(newValue.getName());
-					streetTextField.setText(newValue.getStreet()); 
-					numberTextField.setText(newValue.getNumber()); 
-					complementTextField.setText(newValue.getComplement()); 
-					phoneTextField.setText(newValue.getPhone());
-					saveButton.setText("Update");
-				}
-			});
+		tableView.getColumns().addAll(nameColumn, addressColumn, phoneColumn);
 
-		tableView.getSelectionModel().selectedItemProperty()
-				.addListener((ob, oldValue, newValue) -> {
-					controller.onPublisherSelected(newValue);
-				});
+		controller.getPublisherSelected().addListener((ob, oldValue, newValue) -> {
+			if (newValue == null) {
+				nameTextField.setText("");
+				streetTextField.setText("");
+				numberTextField.setText("");
+				complementTextField.setText("");
+				phoneTextField.setText("");
+				saveButton.setText("Register");
+			} else {
+				nameTextField.setText(newValue.getName());
+				streetTextField.setText(newValue.getStreet());
+				numberTextField.setText(newValue.getNumber());
+				complementTextField.setText(newValue.getComplement());
+				phoneTextField.setText(newValue.getPhone());
+				saveButton.setText("Update");
+			}
+		});
+
+		tableView.getSelectionModel().selectedItemProperty().addListener((ob, oldValue, newValue) -> {
+			controller.onPublisherSelected(newValue);
+		});
 
 		MenuItem deleteMenuItem = new MenuItem("Delete");
 		deleteMenuItem.setOnAction(event -> controller.deletePublisher());
 		tableView.setContextMenu(new ContextMenu(deleteMenuItem));
 
-		FilteredList<Publisher> filteredList = new FilteredList<>(
-				controller.getPublishersList());
+		FilteredList<Publisher> filteredList = new FilteredList<>(controller.getPublishersList());
 		filterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
 			filteredList.setPredicate(publisher -> {
 				if (newValue == null || newValue.isBlank()) {
@@ -147,8 +142,7 @@ public class PublisherView extends BorderPane {
 
 				if (publisher.getName().toLowerCase().contains(text)
 						|| publisher.getPhone().toLowerCase().contains(text)
-						|| publisher.getStreet().toLowerCase().contains(text)
-						|| publisher.getNumber().contains(text)
+						|| publisher.getStreet().toLowerCase().contains(text) || publisher.getNumber().contains(text)
 						|| publisher.getComplement().contains(text)) {
 					return true;
 				}
@@ -160,17 +154,12 @@ public class PublisherView extends BorderPane {
 		sortedList.comparatorProperty().bind(tableView.comparatorProperty());
 		tableView.setItems(sortedList);
 
-		cancelButton.setOnAction(event -> 
-			tableView.getSelectionModel().clearSelection()
-		);
+		cancelButton.setOnAction(event -> tableView.getSelectionModel().clearSelection());
 
-		saveButton.setOnAction(event -> 
-			controller.onActionButtonPressed(nameTextField.getText(), 
-					phoneTextField.getText(), streetTextField.getText(),
-					numberTextField.getText(), complementTextField.getText())
-		); 
-		
-		controller.getWarningInfo().addListener((ob, old, newValue) -> 
-			AlertUtil.displayAlert(newValue));
+		saveButton.setOnAction(
+				event -> controller.onActionButtonPressed(nameTextField.getText(), phoneTextField.getText(),
+						streetTextField.getText(), numberTextField.getText(), complementTextField.getText()));
+
+		controller.getWarningInfo().addListener((ob, old, newValue) -> AlertUtil.displayAlert(newValue));
 	}
 }

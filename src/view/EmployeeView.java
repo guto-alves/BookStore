@@ -94,7 +94,7 @@ public class EmployeeView extends BorderPane {
 		gridPane.addRow(3, new Label("Email"), emailTextField);
 		gridPane.addRow(4, new Label("Password"), new VBox(8, 
 				new HBox(passwordField, passwordTextField),
-				new HBox(8, new Label("Mostrar Password?"), showPasswordCheckBox)));
+				new HBox(8, new Label("Show password?"), showPasswordCheckBox)));
 		gridPane.add(new HBox(16, cancelButton, updateButton, saveButton), 1, 5);
 
 		setCenter(new SplitPane(borderPane, gridPane));
@@ -130,7 +130,7 @@ public class EmployeeView extends BorderPane {
 
 		tableView.getSelectionModel().selectedItemProperty()
 			.addListener((observable, oldValue, newValue) -> {
-	//			employeeSelected = newValue;
+				controller.onEmployeeSelected(newValue);
 				
 				if (newValue == null) {
 					nameTextField.setText("");

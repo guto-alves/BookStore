@@ -32,7 +32,7 @@ public class EmployeeController {
 //	}
 	
 	public void onEmployeeSelected(Employee employee) {
-		
+		employeeSelected = employee;
 	}
 
 	public void addEmployee(String name, String phone, Role role, 
@@ -56,6 +56,10 @@ public class EmployeeController {
 	
 	public void updateEmployee(String name, String phone, Role role, 
 			String email, String password) {
+		if (employeeSelected == null) {
+			System.out.println("Employee null");
+			return;
+		}
 		Employee employee = new Employee(employeeSelected.getId(),
 				name, phone, role, email, password);
 		
