@@ -51,7 +51,7 @@ public class SaleController {
 		getAllSales();
 		employeeName.set(EmployeeOn.employee.getName());
 		total.set("0.0");
-		discount.set(String.format(DISCOUNT_FORMAT, 0));
+		discount.set(String.format(DISCOUNT_FORMAT, 0.0));
 	}
 	
 	public void setBooksSelected(List<Book> booksSelected) {
@@ -106,7 +106,7 @@ public class SaleController {
 			customerName.set("");
 			date.set("");
 			total.set("0.0");
-			discount.set(String.format(DISCOUNT_FORMAT, 0));
+			discount.set(String.format(DISCOUNT_FORMAT, 0.0));
 			employeeName.set(EmployeeOn.employee.getName());
 			books.clear();
 			insertionMode.set(true);
