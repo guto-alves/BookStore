@@ -99,7 +99,7 @@ public class SaleBookDaoImpl implements SaleBookDao {
 								resultSet.getInt("EditionNumber"),
 								resultSet.getString("Year"),
 								resultSet.getDouble("Price"),
-								resultSet.getInt("Copies"),
+								resultSet.getInt("Copies") + resultSet.getInt("Count"),
 								new Category(
 										resultSet.getInt("CategoryID"),
 										resultSet.getString("Name")),

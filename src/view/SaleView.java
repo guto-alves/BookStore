@@ -1,7 +1,6 @@
 package view;
 
 import java.time.LocalDate;
-import java.util.stream.Collectors;
 
 import controller.SaleController;
 import javafx.beans.property.SimpleStringProperty;
@@ -44,6 +43,7 @@ public class SaleView extends BorderPane {
 
 	private DatePicker datePicker;
 	private TextField totalTextField;
+	private Label discountLabel;
 
 	private TextField customerCpfTextField;
 	private TextField customerNameTextField;
@@ -66,15 +66,17 @@ public class SaleView extends BorderPane {
 	}
 
 	private void createLayout() {
-		tableView = new TableView<>();
 		filterTextField = new TextField();
 		filterTextField.setPrefWidth(220);
-		FlowPane flowPane = new FlowPane(8, 8, 
+		FlowPane filterFlowPane = new FlowPane(8, 8, 
 				new Label("Filter by"), filterTextField);
-		flowPane.setPadding(new Insets(16)); 
+		filterFlowPane.setPadding(new Insets(16)); 
+		
+		tableView = new TableView<>();
+		
 		BorderPane borderPane = new BorderPane();
 		borderPane.setPadding(new Insets(8)); 
-		borderPane.setTop(flowPane);
+		borderPane.setTop(filterFlowPane);
 		borderPane.setCenter(tableView);
 
 		GridPane gridPane = new GridPane();
@@ -90,13 +92,9 @@ public class SaleView extends BorderPane {
 		customerCpfTextField.setEditable(false);
 		customerNameTextField = new TextField();
 		customerNameTextField.setPrefWidth(220);
-		customerNameTextField.setPromptText("Nome");
+		customerNameTextField.setPromptText("Name");
 		customerNameTextField.setEditable(false);
 		searchCustomerButton = new Button();
-		ImageView imageView = new ImageView("search-icon.png");
-		imageView.setFitWidth(10);
-		imageView.setFitHeight(16);
-		imageView.setPreserveRatio(true);
 		searchCustomerButton.setGraphic(new ImageView(
 				new Image("search-icon.png", 10, 16, true, false)));
 		datePicker = new DatePicker();
@@ -104,6 +102,7 @@ public class SaleView extends BorderPane {
 		datePicker.setValue(LocalDate.now());
 		totalTextField = new TextField();
 		totalTextField.setEditable(false);
+		discountLabel = new Label();
 
 		selectBooksButton = new Button("Select Books");
 		booksListView = new ListView<>();
@@ -124,31 +123,19 @@ public class SaleView extends BorderPane {
 							HBox hbox = new HBox(8);
 							hbox.setAlignment(Pos.CENTER_RIGHT);
 							
+				
 							Label label = new Label(item.getKey().toString());
 							label.setMaxWidth(Double.MAX_VALUE);
 							HBox.setHgrow(label, Priority.ALWAYS);
 							
-							Spinner<Integer> spinner = 
-									new Spinner<Integer>(1, item.getKey().getCopies(), 
-											item.getValue());
-							spinner.setPrefWidth(50);
-							spinner.valueProperty().addListener((ob, old, newValue) -> {
-								double currentTotal = Double.parseDouble(totalTextField.getText());
-								
-								if (old.doubleValue() < newValue) {
-									currentTotal += item.getKey().getPrice();
-								} else {
-									currentTotal -= item.getKey().getPrice();
-								}
-				
-								totalTextField.setText(String.valueOf(currentTotal));
-								
-								booksListView.getItems().set(
-										booksListView.getItems().indexOf(item), 
-										new Pair<Book, Integer>(item.getKey(), newValue));
+							Spinner<Integer> spinner = new Spinner<Integer>(
+									1, item.getKey().getCopies(), item.getValue());
+							
+							spinner.valueProperty().addListener((ob, oldValue, newValue) -> {
+								controller.onSpinnerChanged(newValue, item);
 							});
 							
-							hbox.getChildren().addAll(label, spinner);
+							hbox.getChildren().setAll(label, spinner);
 							
 							setGraphic(hbox);
 						}
@@ -170,11 +157,14 @@ public class SaleView extends BorderPane {
 		Label customerLabel = new Label("Customer");
 		GridPane.setValignment(customerLabel, VPos.TOP);
 		
+		HBox hbox = new HBox(8, totalTextField, discountLabel);
+		hbox.setAlignment(Pos.CENTER_LEFT);
+				
 		gridPane.addRow(0, customerLabel,
 				new VBox(new HBox(customerCpfTextField, searchCustomerButton),
 						customerNameTextField)); 
 		gridPane.addRow(1, new Label("Date"), datePicker);
-		gridPane.addRow(2, new Label("Total"), totalTextField);
+		gridPane.addRow(2, new Label("Total"), hbox);
 		gridPane.addRow(3, booksVBox);
 		gridPane.addRow(4, new Label("Employee"), employeeNameTextField);
 		gridPane.add(new HBox(16, cancelButton, saveButton), 1, 5);
@@ -183,10 +173,11 @@ public class SaleView extends BorderPane {
 	}
 
 	private void initialize() { 
-		datePicker.getEditor().textProperty().bindBidirectional(controller.getDate());
-		totalTextField.textProperty().bindBidirectional(controller.getTotal());
 		customerCpfTextField.textProperty().bindBidirectional(controller.getCustomerCpf());
 		customerNameTextField.textProperty().bindBidirectional(controller.getCustomerName());
+		datePicker.getEditor().textProperty().bindBidirectional(controller.getDate()); 
+		totalTextField.textProperty().bindBidirectional(controller.getTotal());
+		discountLabel.textProperty().bindBidirectional(controller.getDiscount()); 
 		employeeNameTextField.textProperty().bindBidirectional(controller.getEmployeeName()); 
 		booksListView.setItems(controller.getBooks());
 
@@ -221,6 +212,10 @@ public class SaleView extends BorderPane {
 			.addListener((observable, oldValue, newValue) -> 
 				controller.setSaleSelected(newValue)
 			);
+		
+		MenuItem deleteSaleMenuItem = new MenuItem("Delete");
+		deleteSaleMenuItem.setOnAction(event -> controller.deleteSale());
+		tableView.setContextMenu(new ContextMenu(deleteSaleMenuItem));
 
 		FilteredList<Sale> filteredList = new FilteredList<>(controller.getSales());
 		
@@ -258,28 +253,7 @@ public class SaleView extends BorderPane {
 		selectBooksButton.setOnAction(event -> {
 			BooksSelectionDialog dialog = new BooksSelectionDialog();
 			dialog.show(books -> {
-				booksListView.getItems().setAll(
-						books.stream()
-							.map(book -> new Pair<Book, Integer>(book, 1))
-							.collect(Collectors.toList()));
-				totalTextField.setText("0.0");
-				
-				totalTextField.setText(String.valueOf(
-						booksListView.getItems()
-							.stream()
-							.mapToDouble(pair -> pair.getKey().getPrice() * pair.getValue())
-							.sum()));
-				double discount = 1;
-				if (books.size() >= 3) {
-					discount = 0.1;
-				} else if (books.size() >= 6) {
-					discount = 0.15;
-				} else if (books.size() >= 10) {
-					discount = 0.25;
-				}
-				double total = Double.parseDouble(totalTextField.getText());
-				total = total - (total * discount);
-				totalTextField.setText(String.valueOf(total));
+				controller.setBooksSelected(books);
 			});
 		});
 		
@@ -287,11 +261,7 @@ public class SaleView extends BorderPane {
 		removeBookMenuItem.setOnAction(event -> {
 			int index = booksListView.getSelectionModel().getSelectedIndex();
 			booksListView.getItems().remove(index);
-			totalTextField.setText(String.valueOf(
-					booksListView.getItems()
-						.stream()
-						.mapToDouble(pair -> pair.getKey().getPrice() * pair.getValue())
-						.sum()));
+			controller.calculateTotal();
 		});
 		booksListView.setContextMenu(new ContextMenu(removeBookMenuItem));
 
@@ -299,13 +269,11 @@ public class SaleView extends BorderPane {
 			tableView.getSelectionModel().clearSelection();
 		});
 
-		saveButton.setOnAction(event -> {
-			if (saveButton.getText().contains("Register")) {
-				controller.addSale();
-			} else {
-				controller.updateSale(); 
-			}
-		});
+		saveButton.setOnAction(event -> controller.onActionButtonPressed());
+		
+		controller.getInsertionMode()
+			.addListener((ob, old, insertionMode) -> 
+					saveButton.setText(insertionMode.booleanValue() ? "Register" : "Update"));
 		
 		controller.getWarningInfo().addListener((ob, old, newValue) -> 
 			AlertUtil.displayAlert(newValue)

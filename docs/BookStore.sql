@@ -97,16 +97,16 @@ CREATE TABLE Sale_Book (
 
 GO
 
-CREATE TRIGGER Trigger_Sale_Book
+CREATE TRIGGER Inserted_Sale_Book_Trigger
 ON Sale_Book
 AFTER INSERT
 AS
 BEGIN
 	DECLARE
-	@Count TINYINT,
-	@BookISBN VARCHAR(20)
-	
-	SELECT @Count = Count, @BookISBN = BookISBN FROM INSERTED 
+	@BookISBN VARCHAR(20),
+	@Count TINYINT
+
+	SELECT @BookISBN = BookISBN, @Count = Count FROM INSERTED
 	
 	UPDATE Book
 	SET Copies -= @Count
@@ -114,6 +114,25 @@ BEGIN
 END;
 
 GO
+
+CREATE TRIGGER Deleted_Sale_Book_Trigger
+ON Sale_Book
+AFTER DELETE
+AS
+BEGIN
+	DECLARE
+	@BookISBN VARCHAR(20), 
+	@Count TINYINT
+
+	SELECT @BookISBN = BookISBN, @Count = Count FROM DELETED
+
+	UPDATE Book
+	SET Copies += @Count
+	WHERE ISBN = @BookISBN
+END;
+
+GO
+
 
 INSERT INTO Employee
 	VALUES('Admin', '12345678', 'ADMIN', 'admin', 'admin123');
