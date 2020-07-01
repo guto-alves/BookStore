@@ -127,7 +127,6 @@ public class MainMenuView {
 		root.setCenter(splitPane);
 		
 		addTab(salesTab);
-		addTab(booksTab);
 	}
 
 	private void addTab(Tab tab) {

@@ -11,16 +11,15 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import model.Author;
+import model.Book;
+import model.Category;
 import model.Publisher;
 import persistence.AuthorBookDao;
-import persistence.AuthorBookDaoImpl;
 import persistence.AuthorDao;
 import persistence.BookDao;
 import persistence.CategoryDao;
 import persistence.DAOFactory;
 import persistence.PublisherDao;
-import model.Book;
-import model.Category;
 
 public class BookController {
 	private StringProperty isbn = new SimpleStringProperty();
@@ -45,7 +44,7 @@ public class BookController {
 	private final BookDao bookDao;
 	private final PublisherDao publisherDao;
 	private final AuthorDao authorDao;
-	private final AuthorBookDao authorBookDaoImpl;
+	private final AuthorBookDao authorBookDao;
 	private final CategoryDao categoryDao;
 
 	private BooleanProperty insertionMode = new SimpleBooleanProperty(true);
@@ -57,7 +56,7 @@ public class BookController {
 		categoryDao = DAOFactory.getCategoryDao();
 		publisherDao =DAOFactory.getPublisherDao();
 		authorDao = DAOFactory.getAuthorDao();
-		authorBookDaoImpl = DAOFactory.getAuthorBookDao();
+		authorBookDao = DAOFactory.getAuthorBookDao();
 
 		publishers = FXCollections.observableArrayList();
 		authors = FXCollections.observableArrayList();
@@ -101,7 +100,7 @@ public class BookController {
 			publisherSelected.set(bookSelected.getPublisher());
 			categorySelected.set(bookSelected.getCategory());
 			authorsSelected.setAll(
-					authorBookDaoImpl.getAllAuthors(isbn.get()));
+					authorBookDao.getAllAuthors(isbn.get()));
 			
 			insertionMode.set(false);
 		}
@@ -117,7 +116,7 @@ public class BookController {
 		int result = bookDao.addBook(book);
 
 		if (result == 1) {
-			authorBookDaoImpl.add(authorsSelected, isbn.get());
+			authorBookDao.add(authorsSelected, isbn.get());
 			
 			books.add(book);
 			setBookSelected(null);
@@ -139,7 +138,7 @@ public class BookController {
 		
 		int result = bookDao.updateBook(book, bookSelected.getIsbn());
 
-		authorBookDaoImpl.update(authorsSelected, isbn.get());
+		authorBookDao.update(authorsSelected, isbn.get());
 
 		if (result == 1) {
 			books.setAll(bookDao.getAllBooks());
@@ -156,6 +155,8 @@ public class BookController {
 		if (bookSelected == null) {
 			return;
 		}
+		
+		authorBookDao.delete(bookSelected.getIsbn());
 
 		int result = bookDao.deleteBook(bookSelected.getIsbn());
 
