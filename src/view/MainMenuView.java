@@ -1,5 +1,7 @@
 package view;
 
+import java.io.File;
+
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
@@ -18,6 +20,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
 import model.EmployeeOn;
 import model.Role;
@@ -38,11 +42,23 @@ public class MainMenuView {
 		MenuItem newTextFile = new MenuItem("New File");
 		newTextFile.setOnAction(event -> {
 			Tab annotationsTab = new Tab("Annotations");
-			annotationsTab.setContent(new AnnotationsView()); 
+			annotationsTab.setContent(new AnnotationsView(null)); 
 			addTab(annotationsTab);
 		});
 
 		MenuItem openTextFile = new MenuItem("Open File");
+		openTextFile.setOnAction(event -> {
+			FileChooser fileChooser = new FileChooser();
+			fileChooser.getExtensionFilters().add(
+					new ExtensionFilter("Text Files", "*.txt"));
+			File file = fileChooser.showOpenDialog(null);
+			
+			if (file != null) {
+				Tab annotationsTab = new Tab("Annotations");
+				annotationsTab.setContent(new AnnotationsView(file)); 
+				addTab(annotationsTab);
+			}
+		});
 		MenuItem exitMenuItem = new MenuItem("Exit");
 		exitMenuItem.setOnAction(event -> {
 			System.exit(0);
