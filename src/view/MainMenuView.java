@@ -19,6 +19,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
+import model.EmployeeOn;
+import model.Role;
 
 public class MainMenuView { 
 	private BorderPane root;
@@ -63,8 +65,13 @@ public class MainMenuView {
 
 		listView = new ListView<>();
 		listView.setMaxHeight(ListView.USE_COMPUTED_SIZE);
-		listView.getItems().addAll(salesTab, customersTab, booksTab,
-				categoriesTab, authorsTab, publishersTab, employeesTab);
+		
+		if (EmployeeOn.employee.getRole() == Role.ADMIN) {
+			listView.getItems().addAll(salesTab, customersTab, booksTab,
+					categoriesTab, authorsTab, publishersTab, employeesTab);
+		} else {
+			listView.getItems().addAll(salesTab, customersTab);
+		}
 		
 		listView.setCellFactory(new Callback<ListView<Tab>, ListCell<Tab>>() {
 			
